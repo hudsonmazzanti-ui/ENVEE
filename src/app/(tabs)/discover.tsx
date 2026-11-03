@@ -8,7 +8,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useFrameWidth } from '@/components/useFrameWidth';
 import { BagButton, Chip, ProductCard, SectionHeader, TopBar, Txt } from '@/components/ui';
 import { looks, products } from '@/data/catalog';
-import { C, F, R, S } from '@/theme';
+import { C, R, S } from '@/theme';
 import { art } from '@/theme/assets';
 
 const FILTERS = ['All', 'Living', 'Bedroom', 'Lighting', 'Decor', 'Under $200'];
@@ -29,8 +29,7 @@ export default function Discover() {
         <View style={{ paddingHorizontal: S.gutter, paddingTop: 4 }}>
           <View style={styles.search}>
             <Feather name="search" size={17} color={C.text3} />
-            <Txt v="body" style={{ color: C.text3, flex: 1 }}>Search pieces, stores or rooms</Txt>
-            <Feather name="sliders" size={16} color={C.text} />
+            <Txt v="body" style={{ color: C.text3, flex: 1 }}>Search</Txt>
           </View>
         </View>
 
@@ -39,31 +38,25 @@ export default function Discover() {
             <Image source={art[hero.image]} style={StyleSheet.absoluteFill} contentFit="cover" />
             <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.55)']} style={[StyleSheet.absoluteFill, { top: '50%' }]} />
             <View style={styles.heroText}>
-              <Txt v="eyebrow" style={{ color: 'rgba(255,255,255,0.85)' }}>The edit · Issue 04</Txt>
-              <Txt v="title" style={{ color: C.white, marginTop: 6 }}>{hero.title}</Txt>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10 }}>
-                <Txt v="small" style={{ color: C.white, fontFamily: F.medium }}>Shop the look</Txt>
-                <Feather name="arrow-right" size={14} color={C.white} />
-              </View>
+              <Txt v="title" style={{ color: C.white }}>{hero.title}</Txt>
             </View>
           </View>
         </Pressable>
 
         <View style={{ marginTop: S.xxl }}>
-          <SectionHeader eyebrow="From renters like you" title="Real first apartments" />
+          <SectionHeader title="Rooms" />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, gap: S.md }}>
             {rest.map((l) => (
               <Pressable key={l.id} onPress={() => router.push(`/look/${l.id}`)} style={{ width: 176 }}>
                 <Image source={art[l.image]} style={{ width: 176, height: 226, borderRadius: R.md }} contentFit="cover" />
                 <Txt v="bodyMedium" style={{ fontSize: 14, marginTop: 10 }}>{l.title}</Txt>
-                <Txt v="small" style={{ fontSize: 12 }}>{l.author} · {l.productIds.length} pieces</Txt>
               </Pressable>
             ))}
           </ScrollView>
         </View>
 
         <View style={{ backgroundColor: C.bg, paddingTop: S.xxl, paddingBottom: S.md }}>
-          <Txt v="heading" style={{ paddingHorizontal: S.gutter, marginBottom: S.md }}>Pieces we love</Txt>
+          <Txt v="heading" style={{ paddingHorizontal: S.gutter, marginBottom: S.md }}>Pieces</Txt>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, gap: 8 }}>
             {FILTERS.map((f) => (
               <Chip key={f} label={f} active={filter === f} onPress={() => setFilter(f)} />

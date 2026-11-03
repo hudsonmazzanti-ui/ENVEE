@@ -205,8 +205,7 @@ export function ProductCard({ product, width, onPress }: { product: Product; wid
           <HeartButton id={product.id} light />
         </View>
       </View>
-      <Txt v="eyebrow" style={{ marginTop: 10, fontSize: 10 }} numberOfLines={1}>{product.retailer}</Txt>
-      <Txt v="body" style={{ fontSize: 14, marginTop: 2 }} numberOfLines={1}>{product.name}</Txt>
+      <Txt v="body" style={{ fontSize: 14, marginTop: 10 }} numberOfLines={1}>{product.name}</Txt>
       <View style={{ flexDirection: 'row', gap: 6, marginTop: 2 }}>
         <Txt v="price">{money(product.price)}</Txt>
         {product.was ? <Txt v="price" style={{ color: C.text3, textDecorationLine: 'line-through' }}>{money(product.was)}</Txt> : null}

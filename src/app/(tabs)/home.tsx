@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { SpaceThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
@@ -23,8 +23,7 @@ export default function Home() {
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         <View style={{ paddingHorizontal: S.gutter, paddingTop: S.lg, paddingBottom: S.xl }}>
-          <Txt v="eyebrow">Tuesday · Move-in in 23 days</Txt>
-          <Txt v="title" style={{ marginTop: 8 }}>Good evening, Maya.</Txt>
+          <Txt v="title">Good evening, Maya.</Txt>
         </View>
 
         {first ? <FeatureSpace space={first} width={W - S.gutter * 2} /> : null}
@@ -38,7 +37,6 @@ export default function Home() {
               <Feather name="plus" size={22} color={C.accent} />
             </View>
             <Txt v="bodyMedium" style={{ marginTop: 12 }}>New space</Txt>
-            <Txt v="small" style={{ textAlign: 'center', marginTop: 4, paddingHorizontal: 12 }}>A photo of your room or a rental listing</Txt>
           </Pressable>
         </View>
         {rest.length > 1 ? (
@@ -49,16 +47,9 @@ export default function Home() {
           </View>
         ) : null}
 
-        <View style={styles.tip}>
-          <Feather name="link-2" size={18} color={C.accent} />
-          <View style={{ flex: 1 }}>
-            <Txt v="bodyMedium" style={{ fontSize: 14 }}>Paste from any store</Txt>
-            <Txt v="small">Copy a product link, open a space and tap Paste. We cut the piece out so it sits right in your room.</Txt>
-          </View>
-        </View>
 
         <View style={{ marginTop: S.xxl }}>
-          <SectionHeader eyebrow="Picked for your bedroom" title="Pieces that fit 120 sq ft" action="See all" onAction={() => router.push('/discover')} />
+          <SectionHeader title="For your bedroom" action="See all" onAction={() => router.push('/discover')} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, gap: S.md }}>
             {products.filter((p) => ['bed', 'pendant', 'dresser', 'mirror', 'tablelamp', 'sidetable'].includes(p.id)).map((p) => (
               <ProductCard key={p.id} product={p} width={150} />
@@ -76,20 +67,13 @@ function FeatureSpace({ space, width }: { space: Space; width: number }) {
     <Pressable onPress={() => router.push(`/room/${space.id}`)} style={{ marginHorizontal: S.gutter }}>
       <View style={[styles.featureImg, { height: h }, shadow]}>
         <SpaceThumb space={space} width={width} height={h} />
-        <View style={styles.pill}>
-          <Feather name={space.kind === 'listing' ? 'link' : 'camera'} size={11} color={C.text} />
-          <Txt v="small" style={{ color: C.text, fontSize: 11 }}>{space.subtitle}</Txt>
-        </View>
       </View>
       <View style={[styles.row, { marginTop: 12, alignItems: 'flex-end' }]}>
         <View style={{ flex: 1 }}>
           <Txt v="heading">{space.name}</Txt>
-          <Txt v="small" style={{ marginTop: 2 }}>{space.stickers.length} pieces · {money(spaceTotal(space))} · {space.edited}</Txt>
+          <Txt v="small" style={{ marginTop: 2 }}>{money(spaceTotal(space))}</Txt>
         </View>
-        <View style={styles.openBtn}>
-          <Txt v="small" style={{ color: C.accent, fontFamily: 'Inter_500Medium' }}>Open</Txt>
-          <Feather name="arrow-right" size={14} color={C.accent} />
-        </View>
+        <Feather name="arrow-right" size={18} color={C.text} style={{ paddingBottom: 4 }} />
       </View>
     </Pressable>
   );
@@ -103,7 +87,7 @@ function SmallSpace({ space, width }: { space: Space; width: number }) {
         <SpaceThumb space={space} width={width} height={h} />
       </View>
       <Txt v="bodyMedium" style={{ marginTop: 8, fontSize: 14 }} numberOfLines={1}>{space.name}</Txt>
-      <Txt v="small" style={{ fontSize: 12 }}>{space.stickers.length} pieces · {money(spaceTotal(space))}</Txt>
+      <Txt v="small" style={{ fontSize: 12 }}>{money(spaceTotal(space))}</Txt>
     </Pressable>
   );
 }

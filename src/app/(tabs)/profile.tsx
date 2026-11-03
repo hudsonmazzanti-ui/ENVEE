@@ -22,7 +22,6 @@ export default function Profile() {
           </View>
           <View style={{ flex: 1 }}>
             <Txt v="heading">Maya Chen</Txt>
-            <Txt v="small">Class of '26 · Moving to Brooklyn</Txt>
           </View>
         </View>
 
@@ -37,9 +36,9 @@ export default function Profile() {
         <View style={styles.budget}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
             <View style={{ flex: 1 }}>
-              <Txt v="eyebrow">Move-in budget</Txt>
+              <Txt v="eyebrow">Budget</Txt>
               <Txt v="heading" style={{ marginTop: 6 }}>
-                {money(planned)} <Txt v="small">of {money(budget)} planned</Txt>
+                {money(planned)} <Txt v="small">/ {money(budget)}</Txt>
               </Txt>
             </View>
             <Txt v="small" style={{ color: C.text, textDecorationLine: 'underline' }}>Edit</Txt>
@@ -47,27 +46,23 @@ export default function Profile() {
           <View style={styles.track}>
             <View style={[styles.fill, { width: `${pct * 100}%` }]} />
           </View>
-          <Txt v="small" style={{ marginTop: 8, fontSize: 12 }}>
-            {planned > budget ? `${money(planned - budget)} over. Try swapping a piece or two.` : `${money(budget - planned)} left to spend across your spaces.`}
-          </Txt>
         </View>
 
         <View style={{ paddingHorizontal: S.gutter, marginTop: S.lg }}>
-          <Item icon="package" label="Orders" detail="1 on the way" onPress={() => router.push('/bag')} />
+          <Item icon="package" label="Orders" onPress={() => router.push('/bag')} />
           <Divider />
-          <Item icon="shopping-bag" label="Connected stores" detail="5 stores" />
+          <Item icon="shopping-bag" label="Stores" />
           <Divider />
-          <Item icon="calendar" label="Move-in date" detail="Fri, Aug 15" />
+          <Item icon="calendar" label="Move-in" detail="Aug 15" />
           <Divider />
-          <Item icon="bell" label="Price-drop alerts" detail="On" />
+          <Item icon="bell" label="Alerts" />
           <Divider />
-          <Item icon="users" label="Share with roommates" />
+          <Item icon="users" label="Roommates" />
           <Divider />
           <Item icon="help-circle" label="Help" />
           <Divider />
           <Item icon="log-out" label="Sign out" onPress={() => router.replace('/')} />
         </View>
-        <Txt v="small" style={{ textAlign: 'center', marginTop: S.xxl, fontSize: 11, color: C.text3 }}>ENVEE · visual prototype · v0.1</Txt>
       </ScrollView>
     </View>
   );

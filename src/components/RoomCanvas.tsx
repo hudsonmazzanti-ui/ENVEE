@@ -1,5 +1,5 @@
 import { Image } from 'expo-image';
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Animated, PanResponder, Pressable, StyleSheet, View } from 'react-native';
 
 import { productById } from '@/data/catalog';

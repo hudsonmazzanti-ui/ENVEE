@@ -51,11 +51,7 @@ export default function Paste() {
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <TopBar left={<BackButton icon="x" />} title="Add a piece" />
       <ScrollView contentContainerStyle={{ padding: S.gutter, paddingBottom: insets.bottom + 40 }} keyboardShouldPersistTaps="handled">
-        <Txt v="title">Paste a link from any store.</Txt>
-        <Txt v="body" style={{ color: C.text2, marginTop: 8 }}>
-          We'll find the piece, cut it out of its background and drop it into{' '}
-          <Txt v="body" style={{ color: C.text, fontFamily: F.medium }}>{space.name}</Txt>.
-        </Txt>
+        <Txt v="title">Paste a link.</Txt>
 
         <View style={styles.inputRow}>
           <Feather name="link-2" size={18} color={C.text3} />
@@ -78,17 +74,14 @@ export default function Paste() {
           ) : null}
         </View>
         <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
-          <Button small kind="secondary" icon="clipboard" label="Paste from clipboard" onPress={() => read(sampleLinks[0])} style={{ flex: 1 }} />
-          <Button small kind="dark" label="Find piece" onPress={submitTyped} />
+          <Button small kind="secondary" icon="clipboard" label="Paste" onPress={() => read(sampleLinks[0])} style={{ flex: 1 }} />
+          <Button small kind="dark" label="Find" onPress={submitTyped} />
         </View>
 
         {phase === 'reading' ? (
           <View style={styles.reading}>
             <ActivityIndicator color={C.accent} />
-            <View style={{ flex: 1 }}>
-              <Txt v="bodyMedium" style={{ fontSize: 14 }}>Reading the page…</Txt>
-              <Txt v="small" numberOfLines={1}>{url.replace('https://', '')}</Txt>
-            </View>
+            <Txt v="bodyMedium" style={{ fontSize: 14, flex: 1 }}>Finding it…</Txt>
           </View>
         ) : null}
 
@@ -99,17 +92,14 @@ export default function Paste() {
               <Image source={art[product.sticker]} style={{ width: '78%', height: '78%' }} contentFit="contain" />
               <View style={styles.cutTag}>
                 <Feather name="scissors" size={11} color={C.accent} />
-                <Txt v="small" style={{ fontSize: 11, color: C.accent, fontFamily: F.medium }}>Background removed</Txt>
+                <Txt v="small" style={{ fontSize: 11, color: C.accent, fontFamily: F.medium }}>Cut out</Txt>
               </View>
             </View>
             <View style={{ padding: S.lg }}>
-              <Txt v="eyebrow">{product.retailer} · {product.domain}</Txt>
+              <Txt v="eyebrow">{product.retailer}</Txt>
               <Txt v="heading" style={{ marginTop: 6 }}>{product.name}</Txt>
-              <View style={{ flexDirection: 'row', gap: 8, marginTop: 4, alignItems: 'center' }}>
-                <Txt v="price">{money(product.price)}</Txt>
-                <Txt v="small">· In stock · Ships in 5–7 days</Txt>
-              </View>
-              <Button label={`Add to ${space.name}`} icon="plus" style={{ marginTop: S.lg }} onPress={() => {
+              <Txt v="price" style={{ marginTop: 4 }}>{money(product.price)}</Txt>
+              <Button label="Add to room" icon="plus" style={{ marginTop: S.lg }} onPress={() => {
                 dispatch({ t: 'sticker/add', spaceId: space.id, productId: product.id });
                 router.back();
               }} />
@@ -119,7 +109,7 @@ export default function Paste() {
 
         {phase === 'idle' ? (
           <View style={{ marginTop: S.xxl }}>
-            <Txt v="eyebrow" style={{ marginBottom: 10 }}>Try a sample link</Txt>
+            <Txt v="eyebrow" style={{ marginBottom: 10 }}>Try one</Txt>
             {sampleLinks.map((l) => {
               const p = productById(l.productId);
               return (
@@ -127,10 +117,7 @@ export default function Paste() {
                   <View style={styles.sampleThumb}>
                     <Image source={art[p.photo]} style={{ width: 36, height: 36 }} contentFit="contain" />
                   </View>
-                  <View style={{ flex: 1 }}>
-                    <Txt v="body" style={{ fontSize: 14 }} numberOfLines={1}>{p.name}</Txt>
-                    <Txt v="small" style={{ fontSize: 12 }} numberOfLines={1}>{l.url.replace('https://', '')}</Txt>
-                  </View>
+                  <Txt v="body" style={{ fontSize: 14, flex: 1 }} numberOfLines={1}>{p.name}</Txt>
                   <Feather name="arrow-up-left" size={16} color={C.text3} />
                 </Pressable>
               );

@@ -38,10 +38,7 @@ export default function RoomEditor() {
       <TopBar
         left={<BackButton />}
         title={
-          <View style={{ alignItems: 'center' }}>
-            <Txt v="bodyMedium" numberOfLines={1}>{space.name}</Txt>
-            <Txt v="small" style={{ fontSize: 11 }}>{space.edited}</Txt>
-          </View>
+          <Txt v="bodyMedium" numberOfLines={1}>{space.name}</Txt>
         }
         right={
           <>
@@ -63,13 +60,7 @@ export default function RoomEditor() {
           />
           {compare ? (
             <View style={styles.compareTag}>
-              <Txt v="eyebrow" style={{ color: C.text }}>Original photo</Txt>
-            </View>
-          ) : null}
-          {!compare && !sel ? (
-            <View style={styles.hint} pointerEvents="none">
-              <Feather name="move" size={12} color={C.text2} />
-              <Txt v="small" style={{ fontSize: 12 }}>Drag pieces to arrange · tap to edit</Txt>
+              <Txt v="eyebrow" style={{ color: C.text }}>Original</Txt>
             </View>
           ) : null}
 
@@ -81,7 +72,7 @@ export default function RoomEditor() {
                 </View>
                 <View style={{ flex: 1 }}>
                   <Txt v="body" style={{ fontSize: 14 }} numberOfLines={1}>{selProduct.name}</Txt>
-                  <Txt v="small" style={{ fontSize: 12 }}>{selProduct.retailer} · {money(selProduct.price)}</Txt>
+                  <Txt v="small" style={{ fontSize: 12 }}>{money(selProduct.price)}</Txt>
                 </View>
                 <Feather name="chevron-right" size={18} color={C.text3} />
               </Pressable>
@@ -97,17 +88,13 @@ export default function RoomEditor() {
 
         <View style={{ paddingHorizontal: S.gutter, paddingTop: S.xl }}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-end', marginBottom: S.md }}>
-            <View style={{ flex: 1 }}>
-              <Txt v="eyebrow">In this room</Txt>
-              <Txt v="heading" style={{ marginTop: 4 }}>{space.stickers.length} pieces</Txt>
-            </View>
-            <Txt v="small">{money(spaceTotal(space))} total</Txt>
+            <Txt v="heading" style={{ flex: 1 }}>{space.stickers.length} pieces</Txt>
           </View>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, gap: 10 }}>
           <Pressable onPress={() => router.push(`/paste?space=${space.id}`)} style={[styles.trayItem, styles.pasteTile]}>
             <Feather name="link-2" size={20} color={C.white} />
-            <Txt v="small" style={{ color: C.white, fontFamily: F.medium, fontSize: 12, marginTop: 6 }}>Paste link</Txt>
+            <Txt v="small" style={{ color: C.white, fontFamily: F.medium, fontSize: 12, marginTop: 6 }}>Paste</Txt>
           </Pressable>
           {space.stickers.map((s) => {
             const p = productById(s.productId);
@@ -121,16 +108,10 @@ export default function RoomEditor() {
           })}
         </ScrollView>
 
-        <Pressable onPress={() => router.push('/discover')} style={styles.browseRow}>
-          <Feather name="search" size={16} color={C.text2} />
-          <Txt v="small" style={{ flex: 1 }}>Or browse pieces picked for this room</Txt>
-          <Feather name="chevron-right" size={16} color={C.text3} />
-        </Pressable>
       </ScrollView>
 
       <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 14) }]}>
         <View style={{ flex: 1 }}>
-          <Txt v="small" style={{ fontSize: 12 }}>{space.stickers.length} pieces from {new Set(space.stickers.map((s) => productById(s.productId).retailer)).size} stores</Txt>
           <Txt v="heading" style={{ fontSize: 24 }}>{money(spaceTotal(space))}</Txt>
         </View>
         <Button label="Shop this room" onPress={() => router.push(`/room/${space.id}/shop`)} />

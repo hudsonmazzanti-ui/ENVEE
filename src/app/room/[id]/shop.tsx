@@ -25,24 +25,20 @@ export default function ShopRoom() {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar left={<BackButton />} title="Shop this room" right={<BagButton />} />
+      <TopBar left={<BackButton />} title="Shop" right={<BagButton />} />
       <ScrollView contentContainerStyle={{ paddingBottom: 130 + insets.bottom }}>
         <View style={{ flexDirection: 'row', gap: S.lg, padding: S.gutter, alignItems: 'center' }}>
           <View style={{ borderRadius: R.md, overflow: 'hidden' }}>
             <SpaceThumb space={space} width={88} height={110} />
           </View>
           <View style={{ flex: 1 }}>
-            <Txt v="eyebrow">{space.subtitle}</Txt>
-            <Txt v="heading" style={{ marginTop: 4 }}>{space.name}</Txt>
-            <Txt v="small" style={{ marginTop: 4 }}>
-              {ids.length} pieces from {new Set(ids.map((x) => productById(x).retailer)).size} stores. One checkout.
-            </Txt>
+            <Txt v="heading">{space.name}</Txt>
           </View>
         </View>
         <Divider style={{ marginHorizontal: S.gutter }} />
 
         {ids.length === 0 ? (
-          <Txt v="body" style={{ padding: S.gutter, color: C.text2 }}>No pieces yet. Paste a link to add one.</Txt>
+          <Txt v="body" style={{ padding: S.gutter, color: C.text2 }}>No pieces yet.</Txt>
         ) : null}
 
         {ids.map((pid) => {
@@ -64,7 +60,6 @@ export default function ShopRoom() {
                 <Pressable onPress={() => router.push(`/product/${pid}`)} style={{ flex: 1 }}>
                   <Txt v="eyebrow" style={{ fontSize: 10 }}>{p.retailer}</Txt>
                   <Txt v="body" style={{ fontSize: 14, marginTop: 2 }} numberOfLines={2}>{p.name}</Txt>
-                  <Txt v="small" style={{ fontSize: 12, marginTop: 2 }}>{p.dims}</Txt>
                 </Pressable>
                 <View style={{ alignItems: 'flex-end' }}>
                   <Txt v="price">{money(p.price)}</Txt>
@@ -76,13 +71,6 @@ export default function ShopRoom() {
           );
         })}
 
-        <View style={styles.perk}>
-          <Feather name="truck" size={18} color={C.accent} />
-          <View style={{ flex: 1 }}>
-            <Txt v="bodyMedium" style={{ fontSize: 14 }}>Delivered by your move-in date</Txt>
-            <Txt v="small">Tell us your move-in day and we'll time every order to arrive the week you get your keys.</Txt>
-          </View>
-        </View>
       </ScrollView>
 
       <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 14), width: W }]}>

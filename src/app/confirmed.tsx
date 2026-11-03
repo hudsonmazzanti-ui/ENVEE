@@ -25,13 +25,9 @@ export default function Confirmed() {
         <Animated.View style={[styles.circle, { transform: [{ scale }] }]}>
           <Feather name="check" size={34} color={C.white} />
         </Animated.View>
-        <Txt v="eyebrow" style={{ marginTop: S.xl }}>Order ENV-20481</Txt>
-        <Txt v="title" style={{ textAlign: 'center', marginTop: 10 }}>Your first place{'\n'}is on its way.</Txt>
-        <Txt v="body" style={{ color: C.text2, textAlign: 'center', marginTop: 12, maxWidth: 300 }}>
-          We've placed your orders with each store. Everything is timed to arrive the week of Aug 11.
-        </Txt>
+        <Txt v="title" style={{ textAlign: 'center', marginTop: S.xl }}>On its way.</Txt>
       </View>
-      <Button label="Back to my spaces" onPress={() => router.dismissTo('/home')} style={{ alignSelf: 'stretch' }} />
+      <Button label="Done" onPress={() => router.dismissTo('/home')} style={{ alignSelf: 'stretch' }} />
     </View>
   );
 }

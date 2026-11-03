@@ -52,9 +52,8 @@ export default function LookScreen() {
       <ScrollView contentContainerStyle={{ paddingBottom: 120 + insets.bottom }}>
         <Image source={art[look.image]} style={{ width: W, height: W * 1.25 }} contentFit="cover" />
         <View style={{ padding: S.gutter }}>
-          <Txt v="eyebrow">{look.room}</Txt>
-          <Txt v="title" style={{ marginTop: 6 }}>{look.title}</Txt>
-          <Txt v="small" style={{ marginTop: 6 }}>Styled by {look.author} · {items.length} pieces · {money(total)}</Txt>
+          <Txt v="title">{look.title}</Txt>
+          <Txt v="small" style={{ marginTop: 6 }}>{look.author}</Txt>
         </View>
         <Divider style={{ marginHorizontal: S.gutter }} />
         {items.map((p) => (
@@ -63,7 +62,6 @@ export default function LookScreen() {
               <Image source={art[p.photo]} style={{ width: 54, height: 54 }} contentFit="contain" />
             </View>
             <View style={{ flex: 1 }}>
-              <Txt v="eyebrow" style={{ fontSize: 10 }}>{p.retailer}</Txt>
               <Txt v="body" style={{ fontSize: 14 }} numberOfLines={1}>{p.name}</Txt>
               <Txt v="price" style={{ marginTop: 2 }}>{money(p.price)}</Txt>
             </View>
@@ -72,9 +70,9 @@ export default function LookScreen() {
         ))}
       </ScrollView>
       <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 14) }]}>
-        <Button kind="secondary" label="Try in my room" icon="image" onPress={tryIt} style={{ flex: 1, paddingHorizontal: 12 }} />
+        <Button kind="secondary" label="Try it" icon="image" onPress={tryIt} style={{ flex: 1, paddingHorizontal: 12 }} />
         <Button
-          label="Add all to bag"
+          label={`Add all · ${money(total)}`}
           style={{ flex: 1, paddingHorizontal: 12 }}
           onPress={() => {
             items.forEach((p) => dispatch({ t: 'bag/add', id: p.id }));

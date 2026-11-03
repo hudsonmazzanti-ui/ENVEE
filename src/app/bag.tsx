@@ -29,23 +29,15 @@ export default function Bag() {
         <View style={styles.empty}>
           <Feather name="shopping-bag" size={28} color={C.text3} />
           <Txt v="heading" style={{ marginTop: 12 }}>Your bag is empty</Txt>
-          <Txt v="small" style={{ textAlign: 'center', marginTop: 6 }}>Shop a room or add pieces you love.</Txt>
-          <Button kind="secondary" label="Back to my spaces" style={{ marginTop: 20 }} onPress={() => router.replace('/home')} />
+          <Button kind="secondary" label="Back" style={{ marginTop: 20 }} onPress={() => router.replace('/home')} />
         </View>
       ) : (
         <>
           <ScrollView contentContainerStyle={{ paddingBottom: 170 + insets.bottom }}>
-            <View style={styles.banner}>
-              <Feather name="layers" size={16} color={C.accent} />
-              <Txt v="small" style={{ flex: 1, color: C.text }}>
-                {Object.keys(byStore).length} stores, one checkout. We place each order for you.
-              </Txt>
-            </View>
             {Object.entries(byStore).map(([store, ls]) => (
               <View key={store} style={{ marginTop: S.lg }}>
                 <View style={styles.storeHead}>
                   <Txt v="eyebrow" style={{ color: C.text }}>{store}</Txt>
-                  <Txt v="small" style={{ fontSize: 12 }}>Free delivery</Txt>
                 </View>
                 {ls.map(({ p, qty }) => (
                   <View key={p.id}>
@@ -75,7 +67,6 @@ export default function Bag() {
 
             <View style={{ padding: S.gutter, gap: 8, marginTop: S.md }}>
               <Line label="Subtotal" value={money(subtotal)} />
-              <Line label="Delivery" value="Free" />
               <Line label="Estimated tax" value={money(tax)} />
             </View>
           </ScrollView>
@@ -86,7 +77,6 @@ export default function Bag() {
               <Txt v="bodyMedium">{money(subtotal + tax)}</Txt>
             </View>
             <Button label="Check out" icon="lock" onPress={() => router.push('/confirmed')} />
-            <Txt v="small" style={{ textAlign: 'center', marginTop: 8, fontSize: 11 }}>Prototype only. No payment is taken.</Txt>
           </View>
         </>
       )}

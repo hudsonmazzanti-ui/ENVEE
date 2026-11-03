@@ -1,4 +1,4 @@
-import { Feather, Ionicons } from '@expo/vector-icons';
+import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
@@ -9,7 +9,7 @@ import { useFrameWidth } from '@/components/useFrameWidth';
 import { BackButton, BagButton, Button, Divider, HeartButton, IconName, TopBar, Txt } from '@/components/ui';
 import { looks, productById } from '@/data/catalog';
 import { useStore } from '@/state/store';
-import { C, F, R, S, money } from '@/theme';
+import { C, R, S, money } from '@/theme';
 import { art } from '@/theme/assets';
 
 export default function ProductScreen() {
@@ -42,21 +42,8 @@ export default function ProductScreen() {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 8 }}>
             <Txt v="bodyMedium" style={{ fontSize: 18 }}>{money(p.price)}</Txt>
             {p.was ? <Txt v="body" style={{ color: C.text3, textDecorationLine: 'line-through' }}>{money(p.was)}</Txt> : null}
-            {p.was ? (
-              <View style={styles.sale}>
-                <Txt v="small" style={{ color: C.accent, fontSize: 11, fontFamily: F.medium }}>Price dropped</Txt>
-              </View>
-            ) : null}
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 8 }}>
-            {[0, 1, 2, 3, 4].map((i) => (
-              <Ionicons key={i} name={i < Math.round(p.rating) ? 'star' : 'star-outline'} size={12} color={C.text} />
-            ))}
-            <Txt v="small" style={{ marginLeft: 4 }}>{p.rating} · {p.reviews.toLocaleString()} reviews</Txt>
-          </View>
-
-          <Txt v="eyebrow" style={{ marginTop: S.xl }}>Colour</Txt>
-          <View style={{ flexDirection: 'row', gap: 12, marginTop: 10 }}>
+          <View style={{ flexDirection: 'row', gap: 12, marginTop: S.xl }}>
             {p.colors.map((c, i) => (
               <Pressable key={c} onPress={() => setColor(i)} style={[styles.swatchRing, color === i && { borderColor: C.text }]}>
                 <View style={[styles.swatch, { backgroundColor: c }]} />
@@ -64,14 +51,8 @@ export default function ProductScreen() {
             ))}
           </View>
 
-          <Txt v="body" style={{ color: C.text2, marginTop: S.xl }}>{p.blurb}</Txt>
-
           <Divider style={{ marginTop: S.xl }} />
-          <Row icon="maximize-2" label="Dimensions" value={p.dims} />
-          <Divider />
-          <Row icon="truck" label="Delivery" value="Free · arrives Aug 9–12" />
-          <Divider />
-          <Row icon="rotate-ccw" label="Returns" value="30 days, free pickup" />
+          <Row icon="maximize-2" label="Size" value={p.dims} />
           <Divider />
           <Pressable style={styles.extLink}>
             <Txt v="small" style={{ color: C.text }}>View on {p.domain}</Txt>
@@ -81,13 +62,12 @@ export default function ProductScreen() {
 
         {seenIn.length ? (
           <View style={{ marginTop: S.md }}>
-            <Txt v="eyebrow" style={{ paddingHorizontal: S.gutter, marginBottom: 12 }}>Seen in these rooms</Txt>
+            <Txt v="eyebrow" style={{ paddingHorizontal: S.gutter, marginBottom: 12 }}>Seen in</Txt>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, gap: S.md }}>
               {seenIn.map((l) => (
                 <Pressable key={l.id} onPress={() => router.push(`/look/${l.id}`)} style={{ width: 150 }}>
                   <Image source={art[l.image]} style={{ width: 150, height: 190, borderRadius: R.md }} contentFit="cover" />
                   <Txt v="bodyMedium" style={{ fontSize: 13, marginTop: 8 }}>{l.title}</Txt>
-                  <Txt v="small" style={{ fontSize: 12 }}>{l.author}</Txt>
                 </Pressable>
               ))}
             </ScrollView>
@@ -115,7 +95,6 @@ export default function ProductScreen() {
               <Image source={art[sp.image]} style={{ width: 44, height: 56, borderRadius: 6 }} contentFit="cover" />
               <View style={{ flex: 1 }}>
                 <Txt v="body" style={{ fontSize: 14 }}>{sp.name}</Txt>
-                <Txt v="small" style={{ fontSize: 12 }}>{sp.subtitle}</Txt>
               </View>
               <Feather name="chevron-right" size={18} color={C.text3} />
             </Pressable>
@@ -125,7 +104,7 @@ export default function ProductScreen() {
 
       {!placing ? (
         <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 14) }]}>
-          <Button kind="secondary" label="Try in a room" icon="image" onPress={() => setPlacing(true)} style={{ flex: 1, paddingHorizontal: 12 }} />
+          <Button kind="secondary" label="Try it" icon="image" onPress={() => setPlacing(true)} style={{ flex: 1, paddingHorizontal: 12 }} />
           <Button
             label={added ? 'Added' : 'Add to bag'}
             icon={added ? 'check' : undefined}

@@ -24,20 +24,14 @@ export default function Welcome() {
       </View>
 
       <View style={[styles.body, { paddingBottom: insets.bottom + 20 }]}>
-        <Txt v="eyebrow">For your first adult apartment</Txt>
-        <Txt v="display" style={{ marginTop: 10 }}>
+        <Txt v="display">
           Picture it.{'\n'}
           <Txt v="display" style={{ fontFamily: 'CormorantGaramond_400Regular_Italic', color: C.accent }}>Then make it home.</Txt>
-        </Txt>
-        <Txt v="body" style={{ color: C.text2, marginTop: 14 }}>
-          Paste furniture from any store onto a photo of your room or a rental listing. Keep what you love, and buy it all in one bag.
         </Txt>
         <View style={{ flex: 1 }} />
         <Button label="Get started" onPress={() => router.replace('/home')} />
         <Pressable onPress={() => router.replace('/home')} style={{ alignSelf: 'center', marginTop: 16 }} hitSlop={10}>
-          <Txt v="small">
-            Already have an account? <Txt v="small" style={{ color: C.text, textDecorationLine: 'underline' }}>Sign in</Txt>
-          </Txt>
+          <Txt v="small" style={{ color: C.text }}>Sign in</Txt>
         </Pressable>
       </View>
     </View>
