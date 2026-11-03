@@ -23,10 +23,10 @@ export default function LookScreen() {
   const tryIt = () => {
     const sid = newSpaceId();
     const placements: Record<string, [number, number, number]> = {
-      rug: [0.5, 0.86, 0.68], sofa: [0.5, 0.7, 0.62], bed: [0.5, 0.71, 0.72], dresser: [0.5, 0.66, 0.46],
-      armchair: [0.32, 0.73, 0.36], floorlamp: [0.83, 0.55, 0.42], coffeetable: [0.5, 0.85, 0.34], plant: [0.15, 0.7, 0.3],
+      rug: [0.5, 0.86, 0.68], bed: [0.5, 0.71, 0.72], dresser: [0.5, 0.66, 0.46],
+      'hazel-chair': [0.3, 0.73, 0.34], floorlamp: [0.83, 0.55, 0.42], coffeetable: [0.5, 0.85, 0.34], plant: [0.15, 0.7, 0.3],
       artprint: [0.5, 0.36, 0.22], pendant: [0.5, 0.17, 0.24], sidetable: [0.6, 0.79, 0.17], tablelamp: [0.4, 0.47, 0.16],
-      mirror: [0.82, 0.6, 0.36], bookshelf: [0.16, 0.54, 0.4], chair: [0.8, 0.75, 0.28],
+      mirror: [0.82, 0.6, 0.36], bookshelf: [0.16, 0.54, 0.4],
     };
     dispatch({
       t: 'space/add',
@@ -39,7 +39,12 @@ export default function LookScreen() {
         light: 'day',
         edited: 'Just now',
         stickers: items.map((p, i) => {
-          const [x, y, size] = placements[p.id] ?? [0.5, 0.6, 0.3];
+          const byCategory: Partial<Record<typeof p.category, [number, number, number]>> = {
+            Sofas: [0.5, 0.71, 0.64],
+            Chairs: [0.8, 0.72, 0.34],
+            Ottomans: [0.5, 0.85, 0.32],
+          };
+          const [x, y, size] = placements[p.id] ?? byCategory[p.category] ?? [0.5, 0.6, 0.3];
           return { uid: `${sid}-${i}`, productId: p.id, x, y, size };
         }),
       },

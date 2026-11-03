@@ -11,7 +11,7 @@ import { looks, products } from '@/data/catalog';
 import { C, R, S } from '@/theme';
 import { art } from '@/theme/assets';
 
-const FILTERS = ['All', 'Living', 'Bedroom', 'Lighting', 'Decor', 'Under $200'];
+const FILTERS = ['All', 'Sofas', 'Chairs', 'Ottomans', 'Lighting', 'Decor', 'Under $500'];
 
 export default function Discover() {
   const W = useFrameWidth();
@@ -19,7 +19,7 @@ export default function Discover() {
   const [hero, ...rest] = looks;
   const col = (W - S.gutter * 2 - S.md) / 2;
   const shown = products.filter((p) =>
-    filter === 'All' ? true : filter === 'Under $200' ? p.price < 200 : p.category === filter,
+    filter === 'All' ? true : filter === 'Under $500' ? p.price < 500 : p.category === filter,
   );
 
   return (

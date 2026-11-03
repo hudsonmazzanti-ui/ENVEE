@@ -1,6 +1,9 @@
 import type { ArtKey } from '@/theme/assets';
 
-// All fake data. Retailers and products are invented for the mockup.
+import { paulaDeenProducts } from './paulaDeen';
+
+// Real products from the Paula Deen Home catalog (see paulaDeen.ts), plus illustrated
+// placeholder pieces (lamps, rugs, decor) from invented retailers.
 export type Product = {
   id: string;
   name: string;
@@ -10,7 +13,7 @@ export type Product = {
   was?: number;
   sticker: ArtKey;
   photo: ArtKey;
-  category: 'Living' | 'Bedroom' | 'Lighting' | 'Decor' | 'Storage';
+  category: 'Sofas' | 'Chairs' | 'Ottomans' | 'Living' | 'Bedroom' | 'Lighting' | 'Decor' | 'Storage';
   colors: string[];
   dims: string;
   blurb: string;
@@ -46,9 +49,7 @@ const p = (
   ...extra,
 });
 
-export const products: Product[] = [
-  p('sofa', 'sofa', 'Arlo Velvet Sofa', 'Hearth & Field', 1290, 'Living', ['#1A6A51', '#C8693F', '#D9CDB8'], '84" W × 36" D × 32" H', 'A deep, low sofa in performance velvet. Kiln-dried frame, brass-capped legs, and cushions that hold their shape.', { was: 1490, rating: 4.8, reviews: 1240 }),
-  p('armchair', 'armchair', 'Sable Leather Lounge Chair', 'Oakline', 640, 'Living', ['#A25A31', '#1A1A1A'], '30" W × 32" D × 31" H', 'Aniline leather that softens with age, on a solid walnut base.', { rating: 4.7, reviews: 386 }),
+const illustrated: Product[] = [
   p('floorlamp', 'floorlamp', 'Arc Floor Lamp, Brass', 'Studio Nord', 289, 'Lighting', ['#C9A35A', '#1A1A1A'], '72" H × 48" reach', 'A sweeping brass arc on a marble base. Lights a reading corner without a ceiling fixture.', { rating: 4.5, reviews: 528 }),
   p('tablelamp', 'tablelamp', 'Gourd Ceramic Table Lamp', 'Maison Verde', 148, 'Lighting', ['#F3EDE2', '#0F5B45'], '24" H × 14" shade', 'Hand-glazed stoneware base with a pleated linen shade.', { rating: 4.6, reviews: 194 }),
   p('plant', 'plant', 'Faux Fiddle Leaf Fig, 5 ft', 'Greenroom', 119, 'Decor', ['#3E8350'], '60" H, 12" pot', 'All of the drama, none of the watering schedule. Ships in a stone-look planter.', { was: 149, rating: 4.4, reviews: 902 }),
@@ -61,8 +62,9 @@ export const products: Product[] = [
   p('dresser', 'dresser', 'Walnut Six-Drawer Dresser', 'Oakline', 720, 'Storage', ['#6B4228'], '58" W × 18" D × 32" H', 'Dovetailed drawers, soft-close runners and solid brass knobs.', { rating: 4.6, reviews: 205 }),
   p('pendant', 'pendant', 'Opal Globe Pendant', 'Studio Nord', 96, 'Lighting', ['#F3E7CC'], '12" Ø, 6 ft cord', 'Hand-blown opal glass with a brushed brass canopy. Plug-in friendly for renters.', { rating: 4.5, reviews: 417 }),
   p('bookshelf', 'bookshelf', 'Oak Open Bookshelf', 'Oakline', 260, 'Storage', ['#D2B184'], '32" W × 12" D × 64" H', 'Four deep shelves in solid oak. Anchors to the wall with a renter-safe kit.', { rating: 4.5, reviews: 132 }),
-  p('chair', 'chair', 'Ivory Dining Chair', 'Maison Verde', 135, 'Living', ['#F2EEE8', '#1A1A1A'], '18" W × 20" D × 32" H', 'Bouclé seat on splayed oak legs. Works at a desk too.', { rating: 4.4, reviews: 98 }),
 ];
+
+export const products: Product[] = [...paulaDeenProducts, ...illustrated];
 
 export const productById = (id: string) => products.find((x) => x.id === id) ?? products[0];
 
@@ -76,19 +78,22 @@ export type Look = {
 };
 
 export const looks: Look[] = [
-  { id: 'emerald', title: 'The Emerald Edit', author: '@nora.lives', room: 'Living room · 540 sq ft', image: 'look_emerald', productIds: ['sofa', 'rug', 'floorlamp', 'coffeetable', 'plant', 'artprint'] },
+  { id: 'emerald', title: 'The Emerald Edit', author: '@nora.lives', room: 'Living room · 540 sq ft', image: 'look_emerald', productIds: ['mallory-sofa', 'rug', 'floorlamp', 'coffeetable', 'plant', 'artprint'] },
   { id: 'warm', title: 'Soft Landing', author: '@theo.firstplace', room: 'Bedroom · 120 sq ft', image: 'look_warm', productIds: ['bed', 'pendant', 'sidetable', 'tablelamp', 'plant'] },
-  { id: 'gallery', title: 'The Reading Corner', author: '@jules.at.home', room: 'Studio · 410 sq ft', image: 'look_gallery', productIds: ['rug', 'armchair', 'sidetable', 'mirror', 'bookshelf', 'pendant'] },
-  { id: 'first', title: 'First Place, Done Right', author: '@sam.rents', room: 'Bedroom · 140 sq ft', image: 'look_first', productIds: ['dresser', 'artprint', 'tablelamp', 'chair', 'plant'] },
+  { id: 'gallery', title: 'The Reading Corner', author: '@jules.at.home', room: 'Studio · 410 sq ft', image: 'look_gallery', productIds: ['rug', 'hazel-chair', 'sidetable', 'mirror', 'bookshelf', 'pendant'] },
+  { id: 'first', title: 'First Place, Done Right', author: '@sam.rents', room: 'Bedroom · 140 sq ft', image: 'look_first', productIds: ['dresser', 'artprint', 'tablelamp', 'bridget-swivel-chair', 'plant'] },
+  { id: 'savannah', title: 'Savannah Sunday', author: '@ellie.unpacks', room: 'Living room · 480 sq ft', image: 'look_savannah', productIds: ['blair-sofa', 'lowell-ottoman-green', 'della-chair-rosella', 'floorlamp', 'plant', 'artprint'] },
 ];
 
 export const lookById = (id: string) => looks.find((x) => x.id === id) ?? looks[0];
 
 // Sample links the "paste" flow pretends to read.
 export const sampleLinks = [
-  { url: 'https://hearthandfield.com/products/arlo-velvet-sofa', productId: 'sofa' },
+  { url: 'https://cmfurniture.com/paula-deen/mallory-sofa', productId: 'mallory-sofa' },
+  { url: 'https://cmfurniture.com/paula-deen/estelle-swivel-glider', productId: 'estelle-glider-coral' },
   { url: 'https://studionord.com/lighting/arc-floor-lamp-brass', productId: 'floorlamp' },
   { url: 'https://maisonverde.com/p/travertine-drum-side-table', productId: 'sidetable' },
-  { url: 'https://oakline.com/sable-lounge-chair', productId: 'armchair' },
+  { url: 'https://cmfurniture.com/paula-deen/hazel-chair', productId: 'hazel-chair' },
+  { url: 'https://cmfurniture.com/paula-deen/lowell-cocktail-ottoman', productId: 'lowell-ottoman-check' },
   { url: 'https://studionord.com/decor/arched-brass-mirror', productId: 'mirror' },
 ];

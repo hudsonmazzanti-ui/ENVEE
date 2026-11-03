@@ -6,6 +6,7 @@ import { SpaceThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
 import { BagButton, ProductCard, SectionHeader, TopBar, Txt, Wordmark } from '@/components/ui';
 import { products } from '@/data/catalog';
+import { paulaDeenProducts } from '@/data/paulaDeen';
 import { Space, spaceTotal, useStore } from '@/state/store';
 import { C, R, S, money, shadow } from '@/theme';
 
@@ -47,6 +48,15 @@ export default function Home() {
           </View>
         ) : null}
 
+
+        <View style={{ marginTop: S.xxl }}>
+          <SectionHeader title="Paula Deen Home" action="See all" onAction={() => router.push('/discover')} />
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, gap: S.md }}>
+            {paulaDeenProducts.filter((p) => ['mallory-sofa', 'della-chair-rosella', 'estelle-glider-coral', 'mabel-settee-bee', 'walker-ottoman-ivory', 'hazel-chair', 'belle-sofa'].includes(p.id)).map((p) => (
+              <ProductCard key={p.id} product={p} width={150} />
+            ))}
+          </ScrollView>
+        </View>
 
         <View style={{ marginTop: S.xxl }}>
           <SectionHeader title="For your bedroom" action="See all" onAction={() => router.push('/discover')} />

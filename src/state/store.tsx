@@ -33,7 +33,7 @@ const st = (productId: string, x: number, y: number, size: number): Placed => ({
 
 const initial: State = {
   bag: { artprint: 1, pendant: 2 },
-  saved: ['sofa', 'mirror', 'floorlamp', 'rug', 'armchair', 'bed'],
+  saved: ['mallory-sofa', 'della-chair-rosella', 'walker-ottoman-ivory', 'mirror', 'floorlamp', 'hazel-chair'],
   spaces: [
     {
       id: 'bedroom',
@@ -61,7 +61,7 @@ const initial: State = {
       edited: 'Edited yesterday',
       stickers: [
         st('rug', 0.5, 0.85, 0.72),
-        st('sofa', 0.5, 0.7, 0.62),
+        st('mallory-sofa', 0.5, 0.72, 0.66),
         st('floorlamp', 0.83, 0.55, 0.42),
         st('artprint', 0.5, 0.38, 0.24),
       ],
@@ -74,7 +74,7 @@ const initial: State = {
       image: 'room_living',
       light: 'warm',
       edited: 'Edited Sunday',
-      stickers: [st('armchair', 0.3, 0.73, 0.36), st('plant', 0.82, 0.72, 0.3)],
+      stickers: [st('hazel-chair', 0.28, 0.72, 0.34), st('walker-ottoman-ivory', 0.55, 0.83, 0.3), st('plant', 0.84, 0.72, 0.3)],
     },
   ],
 };
@@ -125,7 +125,7 @@ function reducer(s: State, a: Action): State {
     case 'sticker/add':
       return mapSpace(s, a.spaceId, (sp) => ({
         ...sp,
-        stickers: [...sp.stickers, st(a.productId, 0.5, 0.62, a.productId === 'rug' ? 0.6 : 0.4)],
+        stickers: [...sp.stickers, st(a.productId, 0.5, 0.66, defaultSize(a.productId))],
       }));
     case 'sticker/move':
       return mapSpace(s, a.spaceId, (sp) => ({
@@ -159,6 +159,16 @@ export function useStore() {
   const v = useContext(Ctx);
   if (!v) throw new Error('StoreProvider missing');
   return v;
+}
+
+/** Starting size of a new sticker, as a fraction of the room photo's width. */
+export function defaultSize(productId: string) {
+  const p = productById(productId);
+  if (productId === 'rug') return 0.6;
+  if (p.category === 'Sofas') return parseInt(p.dims, 10) >= 150 ? 0.82 : parseInt(p.dims, 10) <= 70 ? 0.46 : 0.62;
+  if (p.category === 'Chairs') return 0.36;
+  if (p.category === 'Ottomans') return 0.32;
+  return 0.4;
 }
 
 export const spaceSource = (sp: Space): ImageSource | number => (sp.photoUri ? { uri: sp.photoUri } : art[sp.image]);

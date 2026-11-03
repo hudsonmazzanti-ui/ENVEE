@@ -8,7 +8,7 @@ import path from 'node:path';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const webAssets = path.join(root, 'src/theme/assets.web.ts');
-const mime = { '.png': 'image/png', '.jpg': 'image/jpeg', '.ttf': 'font/ttf' };
+const mime = { '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.ttf': 'font/ttf' };
 const dataUri = (file) => `data:${mime[path.extname(file)]};base64,${fs.readFileSync(file).toString('base64')}`;
 
 // 1. Generate a web-only asset module that uses data URIs instead of bundler asset URLs.
