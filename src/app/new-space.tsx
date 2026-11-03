@@ -17,9 +17,9 @@ export default function NewSpace() {
   const insets = useSafeAreaInsets();
   const [busy, setBusy] = useState<string | null>(null);
 
-  const add = (space: Omit<Space, 'id' | 'edited' | 'stickers'>) => {
+  const add = (space: Omit<Space, 'id' | 'edited' | 'stickers' | 'light'> & { light?: Space['light'] }) => {
     const id = newSpaceId();
-    dispatch({ t: 'space/add', space: { ...space, id, edited: 'Just now', stickers: [] } });
+    dispatch({ t: 'space/add', space: { light: 'off', ...space, id, edited: 'Just now', stickers: [] } });
     router.replace(`/room/${id}`);
   };
 

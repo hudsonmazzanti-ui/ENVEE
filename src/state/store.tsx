@@ -3,6 +3,7 @@ import type { ImageSource } from 'expo-image';
 
 import { productById } from '@/data/catalog';
 import { art, type ArtKey } from '@/theme/assets';
+import type { Light } from '@/theme/lighting';
 
 // In-memory fake state so the mockup feels clickable. Nothing persists.
 export type Placed = { uid: string; productId: string; x: number; y: number; size: number };
@@ -14,6 +15,8 @@ export type Space = {
   image: ArtKey;
   /** A photo the user picked or took. Overrides `image` when set. */
   photoUri?: string;
+  /** Lighting preset applied to the furniture so it sits better in the photo. */
+  light: Light;
   edited: string;
   stickers: Placed[];
 };
@@ -38,6 +41,7 @@ const initial: State = {
       kind: 'photo',
       subtitle: 'Your photo',
       image: 'room_bedroom',
+      light: 'warm',
       edited: 'Edited 2h ago',
       stickers: [
         st('bed', 0.5, 0.71, 0.72),
@@ -53,6 +57,7 @@ const initial: State = {
       kind: 'listing',
       subtitle: 'Rental listing · 2 bed',
       image: 'room_listing',
+      light: 'day',
       edited: 'Edited yesterday',
       stickers: [
         st('rug', 0.5, 0.85, 0.72),
@@ -67,6 +72,7 @@ const initial: State = {
       kind: 'photo',
       subtitle: 'Your photo',
       image: 'room_living',
+      light: 'warm',
       edited: 'Edited Sunday',
       stickers: [st('armchair', 0.3, 0.73, 0.36), st('plant', 0.82, 0.72, 0.3)],
     },
@@ -80,6 +86,7 @@ type Action =
   | { t: 'save/toggle'; id: string }
   | { t: 'space/add'; space: Space }
   | { t: 'space/photo'; spaceId: string; uri: string }
+  | { t: 'space/light'; spaceId: string; light: Light }
   | { t: 'sticker/add'; spaceId: string; productId: string }
   | { t: 'sticker/move'; spaceId: string; uid: string; x: number; y: number }
   | { t: 'sticker/resize'; spaceId: string; uid: string; factor: number }
@@ -111,6 +118,8 @@ function reducer(s: State, a: Action): State {
       };
     case 'space/add':
       return { ...s, spaces: [a.space, ...s.spaces] };
+    case 'space/light':
+      return mapSpace(s, a.spaceId, (sp) => ({ ...sp, light: a.light }));
     case 'space/photo':
       return mapSpace(s, a.spaceId, (sp) => ({ ...sp, photoUri: a.uri }));
     case 'sticker/add':

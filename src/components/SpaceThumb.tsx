@@ -2,6 +2,7 @@ import { Image } from 'expo-image';
 import { StyleSheet, View } from 'react-native';
 
 import { ROOM_RATIO } from '@/components/RoomCanvas';
+import { StickerImage } from '@/components/StickerImage';
 import { productById } from '@/data/catalog';
 import { Space, spaceSource } from '@/state/store';
 import { art } from '@/theme/assets';
@@ -19,12 +20,9 @@ export function SpaceThumb({ space, width, height }: { space: Space; width: numb
         {space.stickers.map((s) => {
           const sz = s.size * cw;
           return (
-            <Image
-              key={s.uid}
-              source={art[productById(s.productId).sticker]}
-              style={{ position: 'absolute', width: sz, height: sz, left: s.x * cw - sz / 2, top: s.y * ch - sz / 2 }}
-              contentFit="contain"
-            />
+            <View key={s.uid} style={{ position: 'absolute', width: sz, height: sz, left: s.x * cw - sz / 2, top: s.y * ch - sz / 2 }}>
+              <StickerImage source={art[productById(s.productId).sticker]} light={space.light} />
+            </View>
           );
         })}
       </View>

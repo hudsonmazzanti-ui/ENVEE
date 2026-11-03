@@ -2,10 +2,12 @@ import { Image } from 'expo-image';
 import { useEffect, useRef } from 'react';
 import { Animated, PanResponder, Pressable, StyleSheet, View } from 'react-native';
 
+import { StickerImage } from '@/components/StickerImage';
 import { productById } from '@/data/catalog';
 import { Placed, Space, spaceSource } from '@/state/store';
 import { C } from '@/theme';
 import { art } from '@/theme/assets';
+import type { Light } from '@/theme/lighting';
 
 export const ROOM_RATIO = 4 / 3; // height / width of room photos
 
@@ -37,6 +39,7 @@ export function RoomCanvas({ space, width, selected, onSelect, onMove, interacti
           onSelect={() => onSelect?.(s.uid)}
           onMove={(x, y) => onMove?.(s.uid, x, y)}
           onDrag={(d) => onDragChange?.(d)}
+          light={space.light}
         />
       ))}
     </View>
@@ -52,6 +55,7 @@ function StickerView({
   onSelect,
   onMove,
   onDrag,
+  light,
 }: {
   s: Placed;
   W: number;
@@ -61,6 +65,7 @@ function StickerView({
   onSelect: () => void;
   onMove: (x: number, y: number) => void;
   onDrag: (dragging: boolean) => void;
+  light: Light;
 }) {
   const size = s.size * W;
   const pan = useRef(new Animated.ValueXY()).current;
@@ -110,7 +115,7 @@ function StickerView({
           transform: pan.getTranslateTransform(),
         },
       ]}>
-      <Image source={art[product.sticker]} style={{ width: '100%', height: '100%' }} contentFit="contain" />
+      <StickerImage source={art[product.sticker]} light={light} />
       {selected ? (
         <View pointerEvents="none" style={styles.selection}>
           <View style={[styles.handle, { top: -5, left: -5 }]} />

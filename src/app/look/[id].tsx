@@ -36,6 +36,7 @@ export default function LookScreen() {
         kind: 'photo',
         subtitle: 'Your photo',
         image: 'room_studio',
+        light: 'day',
         edited: 'Just now',
         stickers: items.map((p, i) => {
           const [x, y, size] = placements[p.id] ?? [0.5, 0.6, 0.3];
