@@ -136,9 +136,12 @@ export function TopBar({
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.topBar, { paddingTop: insets.top + 6 }, !transparent && { backgroundColor: C.bg }]}>
-      <View style={styles.topSide}>{left ?? <View />}</View>
-      <View style={styles.topCenter}>{typeof title === 'string' ? <Txt v="bodyMedium">{title}</Txt> : title}</View>
-      <View style={[styles.topSide, { alignItems: 'flex-end' }]}>{right ?? <View />}</View>
+      {/* With no centre title, the left side (e.g. a screen name) gets the full width so it never wraps. */}
+      <View style={title ? styles.topSide : styles.topLeftWide}>{left ?? <View />}</View>
+      {title ? (
+        <View style={styles.topCenter}>{typeof title === 'string' ? <Txt v="bodyMedium" numberOfLines={1}>{title}</Txt> : title}</View>
+      ) : null}
+      <View style={[title ? styles.topSide : styles.topRightAuto, { alignItems: 'flex-end', justifyContent: 'flex-end' }]}>{right ?? <View />}</View>
     </View>
   );
 }
@@ -245,6 +248,8 @@ const styles = StyleSheet.create({
   badgeText: { color: C.white, fontFamily: F.semibold, fontSize: 9 },
   topBar: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: S.md, paddingBottom: 6, zIndex: 10 },
   topSide: { width: 96, flexDirection: 'row', gap: 2 },
+  topLeftWide: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  topRightAuto: { flexDirection: 'row', gap: 2 },
   topCenter: { flex: 1, alignItems: 'center' },
   section: { flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: S.gutter, marginBottom: S.lg },
   chip: {
