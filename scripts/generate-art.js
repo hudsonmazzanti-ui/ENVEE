@@ -134,12 +134,11 @@ S.chair = `<defs>${oak}</defs>
 <path d="M200 340 l-25 190 h14 l30 -190z M400 340 l25 190 h-14 l-30 -190z M260 340 l-8 170 h10 l14 -170z M340 340 l8 170 h-10 l-14 -170z" fill="url(#oak)"/>
 <rect x="225" y="262" width="12" height="40" fill="url(#oak)"/><rect x="363" y="262" width="12" height="40" fill="url(#oak)"/>`;
 
+// Room stickers: no outline, just a soft shadow so the piece sits in the photo.
 const dieFilter = `<filter id="die" x="-15%" y="-15%" width="130%" height="130%">
-<feMorphology in="SourceAlpha" operator="dilate" radius="12" result="dil"/>
-<feFlood flood-color="#ffffff"/><feComposite in2="dil" operator="in" result="outline"/>
-<feGaussianBlur in="dil" stdDeviation="9" result="blur"/><feOffset in="blur" dy="8" result="sh"/>
-<feFlood flood-color="#000" flood-opacity=".22"/><feComposite in2="sh" operator="in" result="shadow"/>
-<feMerge><feMergeNode in="shadow"/><feMergeNode in="outline"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
+<feGaussianBlur in="SourceAlpha" stdDeviation="7" result="blur"/><feOffset in="blur" dy="7" result="sh"/>
+<feFlood flood-color="#000" flood-opacity=".28"/><feComposite in2="sh" operator="in" result="shadow"/>
+<feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
 
 // Rooms 900x1200
 function room({ wall, wall2, floor, floorLine, window: win = true, arch = false, light = '#FFF7E6', side = true }) {
