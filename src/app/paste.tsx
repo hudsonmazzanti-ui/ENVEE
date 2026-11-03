@@ -1,0 +1,189 @@
+import { Feather } from '@expo/vector-icons';
+import { Image } from 'expo-image';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Pressable, ScrollView, StyleSheet, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import { BackButton, Button, TopBar, Txt } from '@/components/ui';
+import { productById, sampleLinks } from '@/data/catalog';
+import { useStore } from '@/state/store';
+import { C, F, R, S, money } from '@/theme';
+import { art } from '@/theme/assets';
+
+type Phase = 'idle' | 'reading' | 'ready';
+
+// Fake "paste a shopping link" flow: pretends to read the page and cut the product out.
+export default function Paste() {
+  const { space: spaceId } = useLocalSearchParams<{ space?: string }>();
+  const { state, dispatch } = useStore();
+  const insets = useSafeAreaInsets();
+  const space = state.spaces.find((s) => s.id === spaceId) ?? state.spaces[0];
+  const [url, setUrl] = useState('');
+  const [phase, setPhase] = useState<Phase>('idle');
+  const [productId, setProductId] = useState(sampleLinks[0].productId);
+  const fade = useRef(new Animated.Value(0)).current;
+
+  const read = (link: (typeof sampleLinks)[number]) => {
+    setUrl(link.url);
+    setProductId(link.productId);
+    setPhase('reading');
+  };
+
+  useEffect(() => {
+    if (phase !== 'reading') return;
+    const t = setTimeout(() => {
+      setPhase('ready');
+      fade.setValue(0);
+      Animated.timing(fade, { toValue: 1, duration: 350, useNativeDriver: true }).start();
+    }, 1400);
+    return () => clearTimeout(t);
+  }, [phase, fade]);
+
+  const product = productById(productId);
+
+  const submitTyped = () => {
+    const match = sampleLinks.find((l) => url && l.url.includes(url.trim())) ?? sampleLinks[Math.floor(Math.random() * sampleLinks.length)];
+    read({ url: url || match.url, productId: match.productId });
+  };
+
+  return (
+    <View style={{ flex: 1, backgroundColor: C.bg }}>
+      <TopBar left={<BackButton icon="x" />} title="Add a piece" />
+      <ScrollView contentContainerStyle={{ padding: S.gutter, paddingBottom: insets.bottom + 40 }} keyboardShouldPersistTaps="handled">
+        <Txt v="title">Paste a link from any store.</Txt>
+        <Txt v="body" style={{ color: C.text2, marginTop: 8 }}>
+          We'll find the piece, cut it out of its background and drop it into{' '}
+          <Txt v="body" style={{ color: C.text, fontFamily: F.medium }}>{space.name}</Txt>.
+        </Txt>
+
+        <View style={styles.inputRow}>
+          <Feather name="link-2" size={18} color={C.text3} />
+          <TextInput
+            value={url}
+            onChangeText={(t) => { setUrl(t); if (phase !== 'idle') setPhase('idle'); }}
+            placeholder="https://"
+            placeholderTextColor={C.text3}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="url"
+            returnKeyType="go"
+            onSubmitEditing={submitTyped}
+            style={styles.input}
+          />
+          {url ? (
+            <Pressable onPress={() => { setUrl(''); setPhase('idle'); }} hitSlop={8}>
+              <Feather name="x-circle" size={18} color={C.text3} />
+            </Pressable>
+          ) : null}
+        </View>
+        <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
+          <Button small kind="secondary" icon="clipboard" label="Paste from clipboard" onPress={() => read(sampleLinks[0])} style={{ flex: 1 }} />
+          <Button small kind="dark" label="Find piece" onPress={submitTyped} />
+        </View>
+
+        {phase === 'reading' ? (
+          <View style={styles.reading}>
+            <ActivityIndicator color={C.accent} />
+            <View style={{ flex: 1 }}>
+              <Txt v="bodyMedium" style={{ fontSize: 14 }}>Reading the page…</Txt>
+              <Txt v="small" numberOfLines={1}>{url.replace('https://', '')}</Txt>
+            </View>
+          </View>
+        ) : null}
+
+        {phase === 'ready' ? (
+          <Animated.View style={[styles.result, { opacity: fade, transform: [{ translateY: fade.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
+            <View style={styles.cutout}>
+              <View style={styles.checker} />
+              <Image source={art[product.sticker]} style={{ width: '78%', height: '78%' }} contentFit="contain" />
+              <View style={styles.cutTag}>
+                <Feather name="scissors" size={11} color={C.accent} />
+                <Txt v="small" style={{ fontSize: 11, color: C.accent, fontFamily: F.medium }}>Background removed</Txt>
+              </View>
+            </View>
+            <View style={{ padding: S.lg }}>
+              <Txt v="eyebrow">{product.retailer} · {product.domain}</Txt>
+              <Txt v="heading" style={{ marginTop: 6 }}>{product.name}</Txt>
+              <View style={{ flexDirection: 'row', gap: 8, marginTop: 4, alignItems: 'center' }}>
+                <Txt v="price">{money(product.price)}</Txt>
+                <Txt v="small">· In stock · Ships in 5–7 days</Txt>
+              </View>
+              <Button label={`Add to ${space.name}`} icon="plus" style={{ marginTop: S.lg }} onPress={() => {
+                dispatch({ t: 'sticker/add', spaceId: space.id, productId: product.id });
+                router.back();
+              }} />
+            </View>
+          </Animated.View>
+        ) : null}
+
+        {phase === 'idle' ? (
+          <View style={{ marginTop: S.xxl }}>
+            <Txt v="eyebrow" style={{ marginBottom: 10 }}>Try a sample link</Txt>
+            {sampleLinks.map((l) => {
+              const p = productById(l.productId);
+              return (
+                <Pressable key={l.url} onPress={() => read(l)} style={styles.sample}>
+                  <View style={styles.sampleThumb}>
+                    <Image source={art[p.photo]} style={{ width: 36, height: 36 }} contentFit="contain" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Txt v="body" style={{ fontSize: 14 }} numberOfLines={1}>{p.name}</Txt>
+                    <Txt v="small" style={{ fontSize: 12 }} numberOfLines={1}>{l.url.replace('https://', '')}</Txt>
+                  </View>
+                  <Feather name="arrow-up-left" size={16} color={C.text3} />
+                </Pressable>
+              );
+            })}
+          </View>
+        ) : null}
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  inputRow: {
+    marginTop: S.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    height: 54,
+    paddingHorizontal: 16,
+    borderRadius: R.md,
+    borderWidth: 1,
+    borderColor: C.line,
+    backgroundColor: C.canvas,
+  },
+  input: { flex: 1, fontFamily: F.body, fontSize: 15, color: C.text, height: '100%', outlineStyle: 'none' } as object,
+  reading: {
+    marginTop: S.xl,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+    padding: S.lg,
+    borderRadius: R.md,
+    backgroundColor: C.accentSoft,
+  },
+  result: { marginTop: S.xl, borderRadius: R.lg, borderWidth: 1, borderColor: C.line, overflow: 'hidden' },
+  cutout: { height: 260, alignItems: 'center', justifyContent: 'center', backgroundColor: C.canvas },
+  checker: {
+    ...StyleSheet.absoluteFill,
+    opacity: 0.5,
+    backgroundColor: C.canvas,
+  },
+  cutTag: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: C.bg,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+  },
+  sample: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 10 },
+  sampleThumb: { width: 48, height: 48, borderRadius: 8, backgroundColor: C.surface, alignItems: 'center', justifyContent: 'center' },
+});
