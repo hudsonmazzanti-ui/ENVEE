@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { Animated, PanResponder, Pressable, StyleSheet, View } from 'react-native';
 
 import { productById } from '@/data/catalog';
-import { Placed, Space } from '@/state/store';
+import { Placed, Space, spaceSource } from '@/state/store';
 import { C } from '@/theme';
 import { art } from '@/theme/assets';
 
@@ -24,7 +24,7 @@ export function RoomCanvas({ space, width, selected, onSelect, onMove, interacti
   return (
     <View style={{ width, height, backgroundColor: C.surface, overflow: 'hidden' }}>
       <Pressable style={StyleSheet.absoluteFill} onPress={() => onSelect?.(null)} disabled={!interactive}>
-        <Image source={art[space.image]} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
+        <Image source={spaceSource(space)} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
       </Pressable>
       {space.stickers.map((s) => (
         <StickerView

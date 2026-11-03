@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { ROOM_RATIO } from '@/components/RoomCanvas';
 import { productById } from '@/data/catalog';
-import { Space } from '@/state/store';
+import { Space, spaceSource } from '@/state/store';
 import { art } from '@/theme/assets';
 
 // Static thumbnail composite: room + stickers at their saved positions (cover-cropped).
@@ -15,7 +15,7 @@ export function SpaceThumb({ space, width, height }: { space: Space; width: numb
   return (
     <View style={{ width, height, overflow: 'hidden' }}>
       <View style={{ position: 'absolute', left: ox, top: oy, width: cw, height: ch }}>
-        <Image source={art[space.image]} style={StyleSheet.absoluteFill} contentFit="cover" />
+        <Image source={spaceSource(space)} style={StyleSheet.absoluteFill} contentFit="cover" />
         {space.stickers.map((s) => {
           const sz = s.size * cw;
           return (

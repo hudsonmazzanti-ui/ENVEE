@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useMemo, useReducer } from 'react';
+import type { ImageSource } from 'expo-image';
 
 import { productById } from '@/data/catalog';
-import type { ArtKey } from '@/theme/assets';
+import { art, type ArtKey } from '@/theme/assets';
 
 // In-memory fake state so the mockup feels clickable. Nothing persists.
 export type Placed = { uid: string; productId: string; x: number; y: number; size: number };
@@ -11,6 +12,8 @@ export type Space = {
   kind: 'photo' | 'listing';
   subtitle: string;
   image: ArtKey;
+  /** A photo the user picked or took. Overrides `image` when set. */
+  photoUri?: string;
   edited: string;
   stickers: Placed[];
 };
@@ -76,6 +79,7 @@ type Action =
   | { t: 'bag/clear' }
   | { t: 'save/toggle'; id: string }
   | { t: 'space/add'; space: Space }
+  | { t: 'space/photo'; spaceId: string; uri: string }
   | { t: 'sticker/add'; spaceId: string; productId: string }
   | { t: 'sticker/move'; spaceId: string; uid: string; x: number; y: number }
   | { t: 'sticker/resize'; spaceId: string; uid: string; factor: number }
@@ -107,6 +111,8 @@ function reducer(s: State, a: Action): State {
       };
     case 'space/add':
       return { ...s, spaces: [a.space, ...s.spaces] };
+    case 'space/photo':
+      return mapSpace(s, a.spaceId, (sp) => ({ ...sp, photoUri: a.uri }));
     case 'sticker/add':
       return mapSpace(s, a.spaceId, (sp) => ({
         ...sp,
@@ -145,6 +151,8 @@ export function useStore() {
   if (!v) throw new Error('StoreProvider missing');
   return v;
 }
+
+export const spaceSource = (sp: Space): ImageSource | number => (sp.photoUri ? { uri: sp.photoUri } : art[sp.image]);
 
 export const spaceTotal = (sp: Space) => sp.stickers.reduce((sum, x) => sum + productById(x.productId).price, 0);
 

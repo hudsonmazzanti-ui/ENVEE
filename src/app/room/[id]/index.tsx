@@ -9,6 +9,7 @@ import { RoomCanvas, ROOM_RATIO } from '@/components/RoomCanvas';
 import { useFrameWidth } from '@/components/useFrameWidth';
 import { BackButton, Button, IconButton, IconName, TopBar, Txt } from '@/components/ui';
 import { productById } from '@/data/catalog';
+import { pickRoomPhoto } from '@/lib/pickPhoto';
 import { spaceTotal, useStore } from '@/state/store';
 import { C, F, R, S, money, shadow } from '@/theme';
 import { art } from '@/theme/assets';
@@ -43,7 +44,14 @@ export default function RoomEditor() {
         right={
           <>
             <IconButton name={compare ? 'eye-off' : 'eye'} label="Compare with original" onPress={() => { setCompare((c) => !c); setSelected(null); }} />
-            <IconButton name="share" label="Share" />
+            <IconButton
+              name="image"
+              label="Change photo"
+              onPress={async () => {
+                const uri = await pickRoomPhoto('library');
+                if (uri) dispatch({ t: 'space/photo', spaceId: space.id, uri });
+              }}
+            />
           </>
         }
       />
@@ -88,7 +96,7 @@ export default function RoomEditor() {
 
         <View style={{ paddingHorizontal: S.gutter, paddingTop: S.xl }}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-end', marginBottom: S.md }}>
-            <Txt v="heading" style={{ flex: 1 }}>{space.stickers.length} pieces</Txt>
+            <Txt v="heading" style={{ flex: 1 }}>{space.stickers.length} {space.stickers.length === 1 ? 'piece' : 'pieces'}</Txt>
           </View>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, gap: 10 }}>

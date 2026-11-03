@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFrameWidth } from '@/components/useFrameWidth';
 import { BackButton, BagButton, Button, Divider, HeartButton, IconName, TopBar, Txt } from '@/components/ui';
 import { looks, productById } from '@/data/catalog';
-import { useStore } from '@/state/store';
+import { spaceSource, useStore } from '@/state/store';
 import { C, R, S, money } from '@/theme';
 import { art } from '@/theme/assets';
 
@@ -92,7 +92,7 @@ export default function ProductScreen() {
                 setPlacing(false);
                 router.push(`/room/${sp.id}`);
               }}>
-              <Image source={art[sp.image]} style={{ width: 44, height: 56, borderRadius: 6 }} contentFit="cover" />
+              <Image source={spaceSource(sp)} style={{ width: 44, height: 56, borderRadius: 6 }} contentFit="cover" />
               <View style={{ flex: 1 }}>
                 <Txt v="body" style={{ fontSize: 14 }}>{sp.name}</Txt>
               </View>
