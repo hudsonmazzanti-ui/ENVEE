@@ -16,13 +16,12 @@ export const C = {
 };
 
 export const F = {
-  display: 'CormorantGaramond_500Medium',
-  displayRegular: 'CormorantGaramond_400Regular',
-  displayItalic: 'CormorantGaramond_400Regular_Italic',
-  wordmark: 'CormorantGaramond_600SemiBold',
-  body: 'Inter_400Regular',
-  medium: 'Inter_500Medium',
-  semibold: 'Inter_600SemiBold',
+  display: 'Cinzel_500Medium',
+  displayRegular: 'Cinzel_400Regular',
+  wordmark: 'Cinzel_600SemiBold',
+  body: 'Jost_400Regular',
+  medium: 'Jost_500Medium',
+  semibold: 'Jost_600SemiBold',
 };
 
 export const S = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32, gutter: 20 };

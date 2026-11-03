@@ -45,13 +45,12 @@ export const art = {
 export type ArtKey = keyof typeof art;
 
 export const fonts = {
-  CormorantGaramond_400Regular: require('@expo-google-fonts/cormorant-garamond/400Regular/CormorantGaramond_400Regular.ttf'),
-  CormorantGaramond_400Regular_Italic: require('@expo-google-fonts/cormorant-garamond/400Regular_Italic/CormorantGaramond_400Regular_Italic.ttf'),
-  CormorantGaramond_500Medium: require('@expo-google-fonts/cormorant-garamond/500Medium/CormorantGaramond_500Medium.ttf'),
-  CormorantGaramond_600SemiBold: require('@expo-google-fonts/cormorant-garamond/600SemiBold/CormorantGaramond_600SemiBold.ttf'),
-  Inter_400Regular: require('@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf'),
-  Inter_500Medium: require('@expo-google-fonts/inter/500Medium/Inter_500Medium.ttf'),
-  Inter_600SemiBold: require('@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf'),
+  Cinzel_400Regular: require('@expo-google-fonts/cinzel/400Regular/Cinzel_400Regular.ttf'),
+  Cinzel_500Medium: require('@expo-google-fonts/cinzel/500Medium/Cinzel_500Medium.ttf'),
+  Cinzel_600SemiBold: require('@expo-google-fonts/cinzel/600SemiBold/Cinzel_600SemiBold.ttf'),
+  Jost_400Regular: require('@expo-google-fonts/jost/400Regular/Jost_400Regular.ttf'),
+  Jost_500Medium: require('@expo-google-fonts/jost/500Medium/Jost_500Medium.ttf'),
+  Jost_600SemiBold: require('@expo-google-fonts/jost/600SemiBold/Jost_600SemiBold.ttf'),
   // Icon fonts, preloaded so icons never flash in and so the inlined web build needs no asset URLs.
   feather: require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Feather.ttf'),
   ionicons: require('@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/Ionicons.ttf'),

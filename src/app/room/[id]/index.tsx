@@ -112,7 +112,7 @@ export default function RoomEditor() {
 
       <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 14) }]}>
         <View style={{ flex: 1 }}>
-          <Txt v="heading" style={{ fontSize: 24 }}>{money(spaceTotal(space))}</Txt>
+          <Txt v="heading" style={{ fontSize: 20 }}>{money(spaceTotal(space))}</Txt>
         </View>
         <Button label="Shop this room" onPress={() => router.push(`/room/${space.id}/shop`)} />
       </View>

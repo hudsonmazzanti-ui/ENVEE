@@ -18,16 +18,10 @@ export default function Welcome() {
       <View style={{ height: heroH }}>
         <Image source={art.look_emerald} style={StyleSheet.absoluteFill} contentFit="cover" contentPosition="bottom" />
         <LinearGradient colors={['rgba(255,255,255,0)', 'rgba(255,255,255,0)', C.bg]} style={StyleSheet.absoluteFill} />
-        <View style={[styles.wordmarkWrap, { top: insets.top + 18 }]}>
-          <Wordmark size={18} />
-        </View>
       </View>
 
       <View style={[styles.body, { paddingBottom: insets.bottom + 20 }]}>
-        <Txt v="display">
-          Picture it.{'\n'}
-          <Txt v="display" style={{ fontFamily: 'CormorantGaramond_400Regular_Italic', color: C.accent }}>Then make it home.</Txt>
-        </Txt>
+        <Wordmark size={34} style={{ alignSelf: 'center' }} />
         <View style={{ flex: 1 }} />
         <Button label="Get started" onPress={() => router.replace('/home')} />
         <Pressable onPress={() => router.replace('/home')} style={{ alignSelf: 'center', marginTop: 16 }} hitSlop={10}>
@@ -39,13 +33,5 @@ export default function Welcome() {
 }
 
 const styles = StyleSheet.create({
-  wordmarkWrap: {
-    position: 'absolute',
-    alignSelf: 'center',
-    backgroundColor: 'rgba(255,255,255,0.88)',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 999,
-  },
   body: { flex: 1, paddingHorizontal: S.gutter + 4, marginTop: -24 },
 });

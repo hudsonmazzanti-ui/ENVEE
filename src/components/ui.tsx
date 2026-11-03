@@ -31,13 +31,12 @@ export function Wordmark({ size = 20, color = C.text, style }: { size?: number; 
   );
 }
 
-type TxtVariant = 'display' | 'title' | 'heading' | 'body' | 'bodyMedium' | 'small' | 'eyebrow' | 'price' | 'italic';
+type TxtVariant = 'display' | 'title' | 'heading' | 'body' | 'bodyMedium' | 'small' | 'eyebrow' | 'price';
 
 const variants: Record<TxtVariant, TextStyle> = {
-  display: { fontFamily: F.display, fontSize: 38, lineHeight: 42, letterSpacing: -0.4 },
-  title: { fontFamily: F.display, fontSize: 30, lineHeight: 34, letterSpacing: -0.2 },
-  heading: { fontFamily: F.display, fontSize: 22, lineHeight: 26 },
-  italic: { fontFamily: F.displayItalic, fontSize: 20, lineHeight: 26 },
+  display: { fontFamily: F.display, fontSize: 30, lineHeight: 36 },
+  title: { fontFamily: F.display, fontSize: 24, lineHeight: 30 },
+  heading: { fontFamily: F.display, fontSize: 18, lineHeight: 24 },
   body: { fontFamily: F.body, fontSize: 15, lineHeight: 22 },
   bodyMedium: { fontFamily: F.medium, fontSize: 15, lineHeight: 21 },
   small: { fontFamily: F.body, fontSize: 13, lineHeight: 18, color: C.text2 },
