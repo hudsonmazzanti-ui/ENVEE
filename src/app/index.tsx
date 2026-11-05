@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { RoomScene } from '@/components/hairline/RoomScene';
@@ -10,28 +10,27 @@ import { C, S } from '@/theme';
 
 export default function Welcome() {
   const insets = useSafeAreaInsets();
-  const { height } = useWindowDimensions();
-  const heroH = Math.min(height * 0.58, 560);
   const enter = () => router.replace('/home');
 
   return (
-    <View style={{ flex: 1, backgroundColor: C.bg }}>
+    <View style={styles.screen}>
       <StatusBar style="light" />
-      {/* The Hairline room: drag across to pull it apart; 70% of the way (or a tap) enters the app. */}
-      <View style={[styles.hero, { height: heroH, paddingTop: insets.top }]}>
-        <RoomScene onOpen={enter} style={{ flex: 1 }} />
-        <View style={styles.hint} pointerEvents="none">
-          <Txt v="small" style={{ color: C.canvas, opacity: 0.8 }}>Swipe the room to step inside</Txt>
-          <Feather name="arrow-right" size={14} color={C.canvas} style={{ opacity: 0.8 }} />
-        </View>
+      {/* The Hairline room fills the screen. Swipe up like a reel: a quick flick or a long slow drag
+          pulls the room apart and enters the app. */}
+      <RoomScene onOpen={enter} style={StyleSheet.absoluteFill} />
+
+      <View style={[styles.top, { paddingTop: insets.top + S.xl }]} pointerEvents="none">
+        <Wordmark size={30} color={C.canvas} />
       </View>
 
-      <View style={[styles.body, { paddingBottom: insets.bottom + 20 }]}>
-        <Wordmark size={34} style={{ alignSelf: 'center' }} />
-        <View style={{ flex: 1 }} />
-        <Button label="Get started" onPress={enter} />
+      <View style={[styles.bottom, { paddingBottom: insets.bottom + 20 }]} pointerEvents="box-none">
+        <View style={styles.hint} pointerEvents="none">
+          <Feather name="chevron-up" size={18} color={C.canvas} />
+          <Txt v="small" style={{ color: C.canvas }}>Swipe up to step inside</Txt>
+        </View>
+        <Button label="Get started" kind="secondary" onPress={enter} style={styles.cta} />
         <Pressable onPress={enter} style={{ alignSelf: 'center', marginTop: 16 }} hitSlop={10}>
-          <Txt v="small" style={{ color: C.text }}>Sign in</Txt>
+          <Txt v="small" style={{ color: C.canvas }}>Sign in</Txt>
         </Pressable>
       </View>
     </View>
@@ -39,7 +38,9 @@ export default function Welcome() {
 }
 
 const styles = StyleSheet.create({
-  hero: { backgroundColor: C.accent, borderBottomLeftRadius: 28, borderBottomRightRadius: 28, overflow: 'hidden' },
-  hint: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingBottom: 18 },
-  body: { flex: 1, paddingHorizontal: S.gutter + 4, paddingTop: S.xl },
+  screen: { flex: 1, backgroundColor: C.accent },
+  top: { position: 'absolute', top: 0, left: 0, right: 0, alignItems: 'center' },
+  bottom: { position: 'absolute', left: 0, right: 0, bottom: 0, paddingHorizontal: S.gutter + 4 },
+  hint: { alignItems: 'center', gap: 2, marginBottom: S.xl, opacity: 0.85 },
+  cta: { backgroundColor: C.canvas, borderColor: C.canvas },
 });

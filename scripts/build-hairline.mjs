@@ -4,7 +4,7 @@
 //   npm run build:hairline  ->  src/components/hairline/roomSceneHtml.ts
 //
 // Re-run after editing hairline/layers.js. The page posts two messages to the app:
-// "open" when a drag that starts in the left third gets 70% of the way across, "tap" on a tap.
+// "open" when a swipe up is long enough or fast enough, "tap" on a tap.
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -30,22 +30,58 @@ window.hairline = (f) => {
   f.mount({ stage, svg, read }, f.range[1]);
 };`;
 
-// A left-to-right drag that gets 70% of the way across opens the app; a tap does too.
+// The reel gesture. The page owns the touch (touch-action: none) and drives the figure with synthetic
+// pointer events, so the figure itself is unchanged: its x is the gap, so swipe progress becomes x.
+// Swiping up pulls the room apart under the finger. On release it enters the app if the swipe was
+// long (ENTER_DIST of the screen height, however slow) or a quick flick (FLICK px/ms, at least
+// FLICK_MIN px); otherwise the room springs back. A tap enters too.
 const swipe = `
 (() => {
+  const ENTER_DIST = 0.3, FLICK = 0.3, FLICK_MIN = 24, TAP = 8;
   const stage = document.getElementById("stage");
   const post = (m) => window.ReactNativeWebView ? window.ReactNativeWebView.postMessage(m) : parent.postMessage({ hairline: m }, "*");
-  const fx = (e) => { const r = stage.getBoundingClientRect(); return (e.clientX - r.left) / r.width; };
-  let start = null, far = 0, sent = false;
-  stage.addEventListener("pointerdown", (e) => { start = fx(e); far = 0; sent = false; });
-  stage.addEventListener("pointermove", (e) => {
-    if (start === null || sent) return;
-    const x = fx(e);
-    far = Math.max(far, Math.abs(x - start));
-    if (start < 0.34 && x >= 0.7) { sent = true; post("open"); }
-  });
-  stage.addEventListener("pointerup", () => { if (start !== null && !sent && far < 0.04) post("tap"); start = null; });
-  stage.addEventListener("pointercancel", () => { start = null; });
+  // Feed the figure a pointer at viewBox point (vx, vy), using the kernel's own screen-to-viewBox mapping.
+  const feed = (type, vx, vy) => {
+    const r = stage.getBoundingClientRect();
+    stage.dispatchEvent(new PointerEvent(type, { pointerType: "mouse", pointerId: 1, bubbles: true,
+      clientX: r.left + (vx / 400) * r.width, clientY: r.top + (vy / 320) * r.height }));
+  };
+  // vy 0 keeps the couch (the layer that lifts highest) bright while the room comes apart.
+  const progress = (p) => feed("pointermove", 60 + 220 * Math.min(1, Math.max(0, p)), 0);
+  let y0 = null, samples = [], done = false;
+  // Real events stop here; the synthetic ones fed above pass through to the figure untouched.
+  const swallow = (e) => { if (!e.isTrusted) return false; e.stopImmediatePropagation(); return true; };
+  for (const t of ["pointerover", "pointerenter", "pointerleave", "pointerout"]) window.addEventListener(t, swallow, true);
+  window.addEventListener("pointerdown", (e) => {
+    if (!swallow(e) || done) return;
+    y0 = e.clientY; samples = [[e.timeStamp, e.clientY]];
+  }, true);
+  window.addEventListener("pointermove", (e) => {
+    if (!swallow(e) || y0 === null || done) return;
+    samples.push([e.timeStamp, e.clientY]);
+    if (samples.length > 8) samples.shift();
+    progress((y0 - e.clientY) / (innerHeight * ENTER_DIST));
+  }, true);
+  const end = (e, cancelled) => {
+    if (!swallow(e) || y0 === null || done) return;
+    const dy = y0 - e.clientY;
+    const recent = samples.filter(([t]) => e.timeStamp - t < 150);
+    const [t1, y1] = recent[0] || samples[0];
+    const v = (y1 - e.clientY) / Math.max(1, e.timeStamp - t1);
+    y0 = null;
+    if (!cancelled && (dy >= innerHeight * ENTER_DIST || (dy >= FLICK_MIN && v >= FLICK))) {
+      done = true; progress(1); post("open");
+    } else if (!cancelled && Math.abs(dy) < TAP) {
+      done = true; post("tap");
+    } else {
+      feed("pointerleave", 0, 0);
+    }
+  };
+  window.addEventListener("pointerup", (e) => end(e, false), true);
+  window.addEventListener("pointercancel", (e) => end(e, true), true);
+  // When the app comes back to this screen, the page is reused: reset.
+  window.addEventListener("pageshow", () => { done = false; feed("pointerleave", 0, 0); });
+  window.hairlineReset = () => { done = false; y0 = null; feed("pointerleave", 0, 0); };
 })();`;
 
 const html = `<!doctype html>
@@ -53,7 +89,9 @@ const html = `<!doctype html>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <style>
   html, body { margin: 0; height: 100%; overflow: hidden; background: ${PALETTE.plate}; -webkit-tap-highlight-color: transparent; }
-  #stage { width: 100%; height: 100%; aspect-ratio: auto; ${vars} cursor: pointer; }
+  #stage { width: 100%; height: 100%; aspect-ratio: auto; touch-action: none; ${vars} cursor: grab; }
+  /* Full screen: the drawing is drawn larger than the stage's width, centred a little above the middle. */
+  #stage > svg { inset: auto; left: 50%; top: 46%; width: min(164vw, 118vh); height: auto; aspect-ratio: 5 / 4; transform: translate(-50%, -50%); }
   #read { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 </style></head>
 <body><div id="stage"></div><span id="read" aria-live="polite"></span>
