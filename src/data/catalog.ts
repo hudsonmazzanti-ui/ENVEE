@@ -20,6 +20,8 @@ export type Product = {
   blurb: string;
   rating: number;
   reviews: number;
+  /** An affiliate link to buy the piece from its retailer. When set, the product page's main button is Shop and opens it. */
+  shopUrl?: string;
 };
 
 const p = (

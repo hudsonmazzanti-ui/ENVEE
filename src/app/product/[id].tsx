@@ -1,5 +1,6 @@
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
+import * as Linking from 'expo-linking';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -23,6 +24,10 @@ export default function ProductScreen() {
   const [added, setAdded] = useState(false);
   const [placing, setPlacing] = useState(false);
   const seenIn = looks.filter((l) => l.productIds.includes(p.id));
+  // Affiliate products are bought on the retailer's site; this opens it (a new tab on web).
+  const shop = () => {
+    if (p.shopUrl) Linking.openURL(p.shopUrl);
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
@@ -55,10 +60,11 @@ export default function ProductScreen() {
           <Divider style={{ marginTop: S.xl }} />
           <Row icon="maximize-2" label="Size" value={p.dims} />
           <Divider />
-          <Pressable style={styles.extLink}>
+          <Pressable style={styles.extLink} onPress={p.shopUrl ? shop : undefined} disabled={!p.shopUrl}>
             <Txt v="small" style={{ color: C.text }}>View on {p.domain}</Txt>
             <Feather name="arrow-up-right" size={14} color={C.text} />
           </Pressable>
+          {p.shopUrl ? <Txt v="small" style={{ color: C.text3 }}>ENVEE may earn a commission when you buy through this link.</Txt> : null}
         </View>
 
         {seenIn.length ? (
@@ -106,6 +112,9 @@ export default function ProductScreen() {
       {!placing ? (
         <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 14) }]}>
           <Button kind="secondary" label="Try it" icon="image" onPress={() => setPlacing(true)} style={{ flex: 1, paddingHorizontal: 12 }} />
+          {p.shopUrl ? (
+            <Button label="Shop" icon="arrow-up-right" style={{ flex: 1, paddingHorizontal: 12 }} onPress={shop} />
+          ) : (
           <Button
             label={added ? 'Added' : 'Add to bag'}
             icon={added ? 'check' : undefined}
@@ -116,6 +125,7 @@ export default function ProductScreen() {
               setTimeout(() => setAdded(false), 1600);
             }}
           />
+          )}
         </View>
       ) : null}
     </View>
