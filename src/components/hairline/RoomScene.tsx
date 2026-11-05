@@ -4,7 +4,7 @@ import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import { roomSceneHtml } from './roomSceneHtml';
 
 type Props = {
-  /** Called on a tap, or when a drag runs all the way from left to right. */
+  /** Called on a tap, or when a left-to-right drag gets 70% of the way across. */
   onOpen: () => void;
   style?: StyleProp<ViewStyle>;
 };

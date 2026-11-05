@@ -123,7 +123,7 @@ function mount({ stage, svg, read }, value) {
   draw();
 
   function move([x, y]) {
-    gap.t = clamp((x - 70) / 260, 0, 1) * gmax;
+    gap.t = clamp((x - 60) / 220, 0, 1) * gmax; // fully apart at 70% across
     let best = 0, bd = Infinity;
     for (let i = 0; i < 4; i++) { const d = Math.abs(rep(i, gap.t) - y); if (d < bd) { bd = d; best = i; } }
     if (best !== act) { act = best; light(act); }

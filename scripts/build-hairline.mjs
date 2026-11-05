@@ -1,17 +1,20 @@
 // Assembles the Hairline room figure (hairline/layers.js) and the Hairline kernel into one
-// self-contained HTML page for the Home screen, with no bench chrome (slider, buttons, captions).
+// self-contained HTML page for the Welcome screen, with no bench chrome (slider, buttons, captions).
 //
 //   npm run build:hairline  ->  src/components/hairline/roomSceneHtml.ts
 //
 // Re-run after editing hairline/layers.js. The page posts two messages to the app:
-// "open" when a drag starts in the left third and reaches the right edge, "tap" on a tap.
+// "open" when a drag that starts in the left third gets 70% of the way across, "tap" on a tap.
 import fs from 'node:fs';
 import path from 'node:path';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const kernel = fs.readFileSync(path.join(root, '.claude/skills/hairline-create/kernel.js'), 'utf8');
 const figure = fs.readFileSync(path.join(root, 'hairline/layers.js'), 'utf8');
-const PLATE = '#FAF8F5'; // C.canvas
+// ENVEE emerald (C.accent) for the plate; the lines are the app's off-white (C.canvas), stepped toward the green
+// for the dimmer strokes so the brightest line still stands out.
+const PALETTE = { plate: '#0F5B45', hi: '#FAF8F5', edge: '#C6D6CE', mid: '#90B1A6', lo: '#5F9081' };
+const vars = Object.entries(PALETTE).map(([k, v]) => `--hairline-${k}: ${v};`).join(' ');
 
 // Mounts the figure the way the bench does, minus the controls. The read-out goes to a hidden live region.
 const host = `
@@ -27,7 +30,7 @@ window.hairline = (f) => {
   f.mount({ stage, svg, read }, f.range[1]);
 };`;
 
-// A full left-to-right drag opens the room; a tap does too.
+// A left-to-right drag that gets 70% of the way across opens the app; a tap does too.
 const swipe = `
 (() => {
   const stage = document.getElementById("stage");
@@ -39,7 +42,7 @@ const swipe = `
     if (start === null || sent) return;
     const x = fx(e);
     far = Math.max(far, Math.abs(x - start));
-    if (start < 0.34 && x > 0.92) { sent = true; post("open"); }
+    if (start < 0.34 && x >= 0.7) { sent = true; post("open"); }
   });
   stage.addEventListener("pointerup", () => { if (start !== null && !sent && far < 0.04) post("tap"); start = null; });
   stage.addEventListener("pointercancel", () => { start = null; });
@@ -49,8 +52,8 @@ const html = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <style>
-  html, body { margin: 0; height: 100%; overflow: hidden; background: ${PLATE}; -webkit-tap-highlight-color: transparent; }
-  #stage { width: 100%; height: 100%; aspect-ratio: auto; --hairline-plate: ${PLATE}; cursor: pointer; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: ${PALETTE.plate}; -webkit-tap-highlight-color: transparent; }
+  #stage { width: 100%; height: 100%; aspect-ratio: auto; ${vars} cursor: pointer; }
   #read { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 </style></head>
 <body><div id="stage"></div><span id="read" aria-live="polite"></span>
