@@ -1,4 +1,5 @@
-// Generates ENVEE placeholder art: furniture "stickers" (s-*), product shots (p-*), rooms and styled looks.
+// Generates ENVEE placeholder art: furniture "stickers" (s-*) and product shots (p-*).
+// Rooms and look backdrops are line art now: see scripts/build-line-art.mjs.
 // Needs Playwright + Chromium. Usage: node scripts/generate-art.js assets/art
 const { chromium } = require('playwright');
 const fs = require('fs');
@@ -140,39 +141,6 @@ const dieFilter = `<filter id="die" x="-15%" y="-15%" width="130%" height="130%"
 <feFlood flood-color="#000" flood-opacity=".28"/><feComposite in2="sh" operator="in" result="shadow"/>
 <feMerge><feMergeNode in="shadow"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
 
-// Rooms 900x1200
-function room({ wall, wall2, floor, floorLine, window: win = true, arch = false, light = '#FFF7E6', side = true }) {
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200">
-<defs><linearGradient id="w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${wall}"/><stop offset="1" stop-color="${wall2}"/></linearGradient>
-<linearGradient id="f" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${floor[0]}"/><stop offset="1" stop-color="${floor[1]}"/></linearGradient>
-<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DDE9EE"/><stop offset="1" stop-color="#F6F1E6"/></linearGradient>
-<radialGradient id="sun" cx=".5" cy=".3" r=".7"><stop offset="0" stop-color="${light}" stop-opacity=".75"/><stop offset="1" stop-color="${light}" stop-opacity="0"/></radialGradient></defs>
-<rect width="900" height="1200" fill="url(#w)"/>
-${side ? `<path d="M0 0 L120 90 V800 L0 920z" fill="#000" opacity=".06"/><path d="M900 0 L780 90 V800 L900 920z" fill="#000" opacity=".04"/>` : ''}
-<path d="M0 920 L120 800 H780 L900 920 V1200 H0z" fill="url(#f)"/>
-${Array.from({length:14},(_,i)=>{const x=-200+i*100; return `<path d="M${450+(x-450)*0.55} 800 L${x} 1200" stroke="${floorLine}" stroke-width="2" opacity=".5"/>`;}).join('')}
-<rect x="120" y="785" width="660" height="16" fill="#FFFFFF" opacity=".8"/>
-${win ? (arch ? `<path d="M330 640 V330 A120 120 0 0 1 570 330 V640z" fill="#FFFFFF"/><path d="M345 628 V335 A105 105 0 0 1 555 335 V628z" fill="url(#sky)"/><path d="M450 230 V628 M345 440 H555" stroke="#FFFFFF" stroke-width="8"/>`
- : `<rect x="300" y="230" width="300" height="420" fill="#FFFFFF"/><rect x="314" y="244" width="272" height="392" fill="url(#sky)"/><path d="M450 244 V636 M314 440 H586" stroke="#FFFFFF" stroke-width="8"/><rect x="290" y="650" width="320" height="14" fill="#FFFFFF"/>`) : ''}
-<ellipse cx="450" cy="980" rx="380" ry="140" fill="url(#sun)"/>
-</svg>`;
-}
-
-const ROOMS = {
-  'room-bedroom': room({ wall: '#EFE6DA', wall2: '#E4D8C8', floor: ['#C9A57A', '#B28A5C'], floorLine: '#9C774D' }),
-  'room-living': room({ wall: '#E9E7E2', wall2: '#DCD9D2', floor: ['#D7C2A3', '#BFA580'], floorLine: '#A68B66', arch: true }),
-  'room-listing': room({ wall: '#F4F3F0', wall2: '#E9E7E3', floor: ['#BE9A6E', '#A07B50'], floorLine: '#8A6741', light: '#FFFFFF' }),
-  'room-studio': room({ wall: '#E3E8E3', wall2: '#D3DAD3', floor: ['#E2D5C2', '#CDBDA6'], floorLine: '#B5A48B', arch: true }),
-};
-
-// looks: room + placed stickers [name, x, y, size]
-const LOOKS = {
-  'look-emerald': ['room-living', [['rug',450,1010,640],['sofa',450,830,560],['floorlamp',740,640,420],['coffeetable',450,1010,300],['plant',150,800,300],['artprint',450,470,200]]],
-  'look-warm': ['room-bedroom', [['bed',450,840,640],['pendant',450,220,230],['sidetable',110,900,170],['tablelamp',110,760,170],['plant',800,860,260]]],
-  'look-gallery': ['room-studio', [['rug',450,1020,600],['armchair',300,880,320],['sidetable',520,940,150],['mirror',720,700,330],['bookshelf',150,640,380],['pendant',480,210,200]]],
-  'look-first': ['room-listing', [['dresser',450,780,420],['artprint',450,430,200],['tablelamp',360,560,140],['chair',740,900,260],['plant',150,860,280]]],
-};
-
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ deviceScaleFactor: 1 });
@@ -186,15 +154,6 @@ const LOOKS = {
     const svgDie = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600"><defs>${dieFilter}</defs><g filter="url(#die)">${inner}</g></svg>`;
     await shot(svgClean, 600, 600, `p-${name}.png`);
     await shot(svgDie, 600, 600, `s-${name}.png`);
-  }
-  for (const [name, svg] of Object.entries(ROOMS)) await shot(svg, 900, 1200, `${name}.jpg`, { type: 'jpeg', quality: 82, omitBackground: false });
-  for (const [name, [base, items]] of Object.entries(LOOKS)) {
-    const roomSvg = ROOMS[base].replace(/<\/svg>$/, '');
-    const g = items.map(([n, x, y, size], i) => {
-      const k = size / 600;
-      return `<svg x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" viewBox="0 0 600 600">${S[n].replace(/id="([^"]+)"/g, `id="$1_${i}"`).replace(/url\(#([^)]+)\)/g, `url(#$1_${i})`)}</svg>`;
-    }).join('');
-    await shot(roomSvg + g + '</svg>', 900, 1200, `${name}.jpg`, { type: 'jpeg', quality: 82, omitBackground: false });
   }
   await browser.close();
   console.log('done');

@@ -2,8 +2,7 @@ import React, { createContext, useContext, useMemo, useReducer } from 'react';
 import type { ImageSource } from 'expo-image';
 
 import { productById } from '@/data/catalog';
-import { art, type ArtKey } from '@/theme/assets';
-import type { Light } from '@/theme/lighting';
+import { roomArt, type RoomKey } from '@/theme/rooms';
 
 // In-memory fake state so the mockup feels clickable. Nothing persists.
 export type Placed = { uid: string; productId: string; x: number; y: number; size: number };
@@ -12,11 +11,10 @@ export type Space = {
   name: string;
   kind: 'photo' | 'listing';
   subtitle: string;
-  image: ArtKey;
+  /** The line-art room shown until there is a photo. */
+  image: RoomKey;
   /** A photo the user picked or took. Overrides `image` when set. */
   photoUri?: string;
-  /** Lighting preset applied to the furniture so it sits better in the photo. */
-  light: Light;
   edited: string;
   stickers: Placed[];
 };
@@ -41,7 +39,6 @@ const initial: State = {
       kind: 'photo',
       subtitle: 'Your photo',
       image: 'room_bedroom',
-      light: 'warm',
       edited: 'Edited 2h ago',
       stickers: [
         st('bed', 0.5, 0.71, 0.72),
@@ -57,7 +54,6 @@ const initial: State = {
       kind: 'listing',
       subtitle: 'Rental listing · 2 bed',
       image: 'room_listing',
-      light: 'day',
       edited: 'Edited yesterday',
       stickers: [
         st('rug', 0.5, 0.85, 0.72),
@@ -72,7 +68,6 @@ const initial: State = {
       kind: 'photo',
       subtitle: 'Your photo',
       image: 'room_living',
-      light: 'warm',
       edited: 'Edited Sunday',
       stickers: [st('hazel-chair', 0.28, 0.72, 0.34), st('walker-ottoman-ivory', 0.55, 0.83, 0.3), st('plant', 0.84, 0.72, 0.3)],
     },
@@ -86,7 +81,6 @@ type Action =
   | { t: 'save/toggle'; id: string }
   | { t: 'space/add'; space: Space }
   | { t: 'space/photo'; spaceId: string; uri: string }
-  | { t: 'space/light'; spaceId: string; light: Light }
   | { t: 'sticker/add'; spaceId: string; productId: string }
   | { t: 'sticker/move'; spaceId: string; uid: string; x: number; y: number }
   | { t: 'sticker/resize'; spaceId: string; uid: string; factor: number }
@@ -118,8 +112,6 @@ function reducer(s: State, a: Action): State {
       };
     case 'space/add':
       return { ...s, spaces: [a.space, ...s.spaces] };
-    case 'space/light':
-      return mapSpace(s, a.spaceId, (sp) => ({ ...sp, light: a.light }));
     case 'space/photo':
       return mapSpace(s, a.spaceId, (sp) => ({ ...sp, photoUri: a.uri }));
     case 'sticker/add':
@@ -171,7 +163,8 @@ export function defaultSize(productId: string) {
   return 0.4;
 }
 
-export const spaceSource = (sp: Space): ImageSource | number => (sp.photoUri ? { uri: sp.photoUri } : art[sp.image]);
+/** The space's photo, or its line-art room. Pass the display width so small thumbnails get the heavier-line copy. */
+export const spaceSource = (sp: Space, width?: number): ImageSource | number => (sp.photoUri ? { uri: sp.photoUri } : roomArt(sp.image, width));
 
 export const spaceTotal = (sp: Space) => sp.stickers.reduce((sum, x) => sum + productById(x.productId).price, 0);
 

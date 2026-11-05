@@ -7,13 +7,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { RoomCanvas, ROOM_RATIO } from '@/components/RoomCanvas';
 import { useFrameWidth } from '@/components/useFrameWidth';
-import { BackButton, Button, Chip, IconButton, IconName, TopBar, Txt } from '@/components/ui';
+import { BackButton, Button, IconButton, IconName, TopBar, Txt } from '@/components/ui';
 import { productById } from '@/data/catalog';
 import { pickRoomPhoto } from '@/lib/pickPhoto';
 import { spaceTotal, useStore } from '@/state/store';
 import { C, F, R, S, money, shadow } from '@/theme';
 import { art } from '@/theme/assets';
-import { LIGHTS, LIGHT_ORDER } from '@/theme/lighting';
 
 export default function RoomEditor() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -95,12 +94,6 @@ export default function RoomEditor() {
           ) : null}
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.lightRow}>
-          <Feather name="sun" size={15} color={C.text2} style={{ marginRight: 2 }} />
-          {LIGHT_ORDER.map((l) => (
-            <Chip key={l} label={LIGHTS[l].label} active={space.light === l} onPress={() => dispatch({ t: 'space/light', spaceId: space.id, light: l })} />
-          ))}
-        </ScrollView>
 
         <View style={{ paddingHorizontal: S.gutter, paddingTop: S.lg }}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-end', marginBottom: S.md }}>
@@ -146,7 +139,6 @@ function Tool({ icon, label, onPress }: { icon: IconName; label: string; onPress
 }
 
 const styles = StyleSheet.create({
-  lightRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: S.gutter, paddingTop: S.lg },
   hint: {
     position: 'absolute',
     bottom: 14,

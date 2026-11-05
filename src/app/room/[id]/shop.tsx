@@ -38,7 +38,11 @@ export default function ShopRoom() {
         <Divider style={{ marginHorizontal: S.gutter }} />
 
         {ids.length === 0 ? (
-          <Txt v="body" style={{ padding: S.gutter, color: C.text2 }}>No pieces yet.</Txt>
+          <View style={{ alignItems: 'center', padding: S.gutter }}>
+            <Image source={art.empty_room} style={{ width: 260, height: 208 }} contentFit="contain" />
+            <Txt v="heading">No pieces yet</Txt>
+            <Button kind="secondary" label="Paste a link" icon="link-2" style={{ marginTop: 20 }} onPress={() => router.push(`/paste?space=${space.id}`)} />
+          </View>
         ) : null}
 
         {ids.map((pid) => {

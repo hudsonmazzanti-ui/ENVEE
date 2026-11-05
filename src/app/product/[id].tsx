@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { LookThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
 import { BackButton, BagButton, Button, Divider, HeartButton, IconName, TopBar, Txt } from '@/components/ui';
 import { looks, productById } from '@/data/catalog';
@@ -21,7 +22,7 @@ export default function ProductScreen() {
   const [color, setColor] = useState(0);
   const [added, setAdded] = useState(false);
   const [placing, setPlacing] = useState(false);
-  const seenIn = looks.filter((l) => l.productIds.includes(p.id));
+  const seenIn = looks.filter((l) => l.pieces.some((x) => x.productId === p.id));
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
@@ -66,7 +67,7 @@ export default function ProductScreen() {
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, gap: S.md }}>
               {seenIn.map((l) => (
                 <Pressable key={l.id} onPress={() => router.push(`/look/${l.id}`)} style={{ width: 150 }}>
-                  <Image source={art[l.image]} style={{ width: 150, height: 190, borderRadius: R.md }} contentFit="cover" />
+                  <LookThumb look={l} width={150} height={190} style={{ borderRadius: R.md }} />
                   <Txt v="bodyMedium" style={{ fontSize: 13, marginTop: 8 }}>{l.title}</Txt>
                 </Pressable>
               ))}

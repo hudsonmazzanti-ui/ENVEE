@@ -41,7 +41,8 @@
     "build:web-inline": "node scripts/build-web-inline.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
-    "build:hairline": "node scripts/build-hairline.mjs"
+    "build:hairline": "node scripts/build-hairline.mjs",
+    "build:line-art": "node scripts/build-line-art.mjs"
   },
   "private": true
 }

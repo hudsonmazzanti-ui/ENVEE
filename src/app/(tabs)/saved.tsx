@@ -1,9 +1,9 @@
-import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
+import { LookThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
 import { BagButton, Button, ProductCard, TopBar, Txt } from '@/components/ui';
 import { looks, productById } from '@/data/catalog';
@@ -43,8 +43,8 @@ export default function Saved() {
             </>
           ) : (
             <View style={styles.empty}>
-              <Feather name="heart" size={28} color={C.text3} />
-              <Txt v="heading" style={{ marginTop: 12 }}>Nothing saved</Txt>
+              <Image source={art.empty_saved} style={{ width: 260, height: 208 }} contentFit="contain" />
+              <Txt v="heading">Nothing saved</Txt>
               <Button kind="secondary" label="Discover" style={{ marginTop: 20 }} onPress={() => router.push('/discover')} />
             </View>
           )
@@ -52,7 +52,7 @@ export default function Saved() {
           <View style={{ paddingHorizontal: S.gutter, gap: S.xl, paddingTop: S.sm }}>
             {looks.slice(1).map((l) => (
               <Pressable key={l.id} onPress={() => router.push(`/look/${l.id}`)} style={{ flexDirection: 'row', gap: S.lg, alignItems: 'center' }}>
-                <Image source={art[l.image]} style={{ width: 110, height: 140, borderRadius: R.md }} contentFit="cover" />
+                <LookThumb look={l} width={110} height={140} style={{ borderRadius: R.md }} />
                 <View style={{ flex: 1 }}>
                   <Txt v="heading">{l.title}</Txt>
                 </View>
@@ -80,5 +80,5 @@ const styles = StyleSheet.create({
   summary: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: S.gutter, marginBottom: S.lg },
   alert: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: C.accentSoft, paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: S.md, rowGap: S.xl, paddingHorizontal: S.gutter },
-  empty: { alignItems: 'center', padding: S.xxl, marginTop: 40 },
+  empty: { alignItems: 'center', padding: S.xxl, paddingTop: S.lg },
 });

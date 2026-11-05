@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -22,14 +23,18 @@ export default function Bag() {
   const tax = Math.round(subtotal * 0.08875);
   const count = lines.reduce((s, l) => s + l.qty, 0);
 
+  const empty = lines.length === 0;
+
   return (
-    <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar left={<BackButton />} title={`Bag${count ? ` · ${count}` : ''}`} />
-      {lines.length === 0 ? (
-        <View style={styles.empty}>
-          <Feather name="shopping-bag" size={28} color={C.text3} />
-          <Txt v="heading" style={{ marginTop: 12 }}>Your bag is empty</Txt>
-          <Button kind="secondary" label="Back" style={{ marginTop: 20 }} onPress={() => router.replace('/home')} />
+    <View style={{ flex: 1, backgroundColor: empty ? C.accent : C.bg }}>
+      {/* An empty bag is a full-screen moment: emerald, drawn like the welcome. */}
+      {empty ? <StatusBar style="light" /> : null}
+      <TopBar transparent={empty} left={<BackButton color={empty ? C.canvas : undefined} />} title={empty ? undefined : `Bag${count ? ` · ${count}` : ''}`} />
+      {empty ? (
+        <View style={[styles.empty, { paddingBottom: insets.bottom + S.xxl * 2 }]}>
+          <Image source={art.empty_bag} style={styles.figure} contentFit="contain" accessibilityIgnoresInvertColors />
+          <Txt v="heading" style={{ color: C.canvas }}>Your bag is empty</Txt>
+          <Button kind="secondary" label="Discover" style={styles.onEmerald} onPress={() => router.replace('/discover')} />
         </View>
       ) : (
         <>
@@ -95,6 +100,8 @@ function Line({ label, value }: { label: string; value: string }) {
 
 const styles = StyleSheet.create({
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: S.xxl },
+  figure: { width: 280, height: 224, marginBottom: S.md },
+  onEmerald: { marginTop: 20, backgroundColor: C.canvas, borderColor: C.canvas },
   banner: { flexDirection: 'row', gap: 10, alignItems: 'center', marginHorizontal: S.gutter, marginTop: S.sm, padding: S.md, borderRadius: R.md, backgroundColor: C.accentSoft },
   storeHead: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: S.gutter, paddingBottom: 6 },
   line: { flexDirection: 'row', gap: 14, paddingHorizontal: S.gutter, paddingVertical: 12 },

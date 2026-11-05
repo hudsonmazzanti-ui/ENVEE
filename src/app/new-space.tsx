@@ -17,9 +17,9 @@ export default function NewSpace() {
   const insets = useSafeAreaInsets();
   const [busy, setBusy] = useState<string | null>(null);
 
-  const add = (space: Omit<Space, 'id' | 'edited' | 'stickers' | 'light'> & { light?: Space['light'] }) => {
+  const add = (space: Omit<Space, 'id' | 'edited' | 'stickers'>) => {
     const id = newSpaceId();
-    dispatch({ t: 'space/add', space: { light: 'off', ...space, id, edited: 'Just now', stickers: [] } });
+    dispatch({ t: 'space/add', space: { ...space, id, edited: 'Just now', stickers: [] } });
     router.replace(`/room/${id}`);
   };
 
@@ -41,18 +41,18 @@ export default function NewSpace() {
       <ScrollView contentContainerStyle={{ padding: S.gutter, paddingBottom: insets.bottom + 32 }}>
         <Txt v="title">New space</Txt>
 
-        <Option icon="image" title="Camera roll" image="room_bedroom" busy={false} onPress={() => fromPhone('library')} />
-        <Option icon="camera" title="Take photo" image="room_studio" busy={false} onPress={() => fromPhone('camera')} />
-        <Option icon="link" title="Rental listing" image="room_listing" busy={busy === 'listing'} onPress={sampleListing} />
+        <Option icon="image" title="Camera roll" image="option_library" busy={false} onPress={() => fromPhone('library')} />
+        <Option icon="camera" title="Take photo" image="option_camera" busy={false} onPress={() => fromPhone('camera')} />
+        <Option icon="link" title="Rental listing" image="option_listing" busy={busy === 'listing'} onPress={sampleListing} />
       </ScrollView>
     </View>
   );
 }
 
-function Option({ icon, title, image, onPress, busy }: { icon: IconName; title: string; image: 'room_studio' | 'room_listing' | 'room_bedroom'; onPress: () => void; busy: boolean }) {
+function Option({ icon, title, image, onPress, busy }: { icon: IconName; title: string; image: 'option_library' | 'option_camera' | 'option_listing'; onPress: () => void; busy: boolean }) {
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.option, pressed && { backgroundColor: C.canvas }]}>
-      <Image source={art[image]} style={styles.optionImg} contentFit="cover" />
+      <Image source={art[image]} style={styles.optionImg} contentFit="contain" />
       <View style={{ flex: 1, padding: S.lg, justifyContent: 'center' }}>
         <View style={styles.iconCircle}>
           <Feather name={icon} size={16} color={C.accent} />
@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     minHeight: 128,
   },
-  optionImg: { width: 96 },
+  optionImg: { width: 104, marginLeft: S.sm },
   iconCircle: { width: 34, height: 34, borderRadius: 17, backgroundColor: C.accentSoft, alignItems: 'center', justifyContent: 'center' },
   busy: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(255,255,255,0.9)', alignItems: 'center', justifyContent: 'center' },
   note: { flexDirection: 'row', gap: 8, alignItems: 'center', marginTop: S.xxl, justifyContent: 'center' },

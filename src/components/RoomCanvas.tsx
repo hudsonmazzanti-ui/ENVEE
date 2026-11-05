@@ -7,7 +7,6 @@ import { productById } from '@/data/catalog';
 import { Placed, Space, spaceSource } from '@/state/store';
 import { C } from '@/theme';
 import { art } from '@/theme/assets';
-import type { Light } from '@/theme/lighting';
 
 export const ROOM_RATIO = 4 / 3; // height / width of room photos
 
@@ -26,7 +25,7 @@ export function RoomCanvas({ space, width, selected, onSelect, onMove, interacti
   return (
     <View style={{ width, height, backgroundColor: C.surface, overflow: 'hidden' }}>
       <Pressable style={StyleSheet.absoluteFill} onPress={() => onSelect?.(null)} disabled={!interactive}>
-        <Image source={spaceSource(space)} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
+        <Image source={spaceSource(space, width)} style={StyleSheet.absoluteFill} contentFit="cover" transition={200} />
       </Pressable>
       {space.stickers.map((s) => (
         <StickerView
@@ -39,7 +38,6 @@ export function RoomCanvas({ space, width, selected, onSelect, onMove, interacti
           onSelect={() => onSelect?.(s.uid)}
           onMove={(x, y) => onMove?.(s.uid, x, y)}
           onDrag={(d) => onDragChange?.(d)}
-          light={space.light}
         />
       ))}
     </View>
@@ -55,7 +53,6 @@ function StickerView({
   onSelect,
   onMove,
   onDrag,
-  light,
 }: {
   s: Placed;
   W: number;
@@ -65,7 +62,6 @@ function StickerView({
   onSelect: () => void;
   onMove: (x: number, y: number) => void;
   onDrag: (dragging: boolean) => void;
-  light: Light;
 }) {
   const size = s.size * W;
   const pan = useRef(new Animated.ValueXY()).current;
@@ -115,7 +111,7 @@ function StickerView({
           transform: pan.getTranslateTransform(),
         },
       ]}>
-      <StickerImage source={art[product.sticker]} light={light} />
+      <StickerImage source={art[product.sticker]} />
       {selected ? (
         <View pointerEvents="none" style={styles.selection}>
           <View style={[styles.handle, { top: -5, left: -5 }]} />

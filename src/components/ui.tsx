@@ -146,11 +146,12 @@ export function TopBar({
   );
 }
 
-export function BackButton({ icon = 'chevron-left' }: { icon?: IconName }) {
+export function BackButton({ icon = 'chevron-left', color }: { icon?: IconName; color?: string }) {
   return (
     <IconButton
       name={icon}
       label="Back"
+      color={color}
       size={icon === 'x' ? 22 : 26}
       onPress={() => (router.canGoBack() ? router.back() : router.replace('/home'))}
     />

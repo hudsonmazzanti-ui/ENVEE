@@ -1,15 +1,14 @@
 import { Feather } from '@expo/vector-icons';
-import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
+import { LookThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
 import { BagButton, Chip, ProductCard, SectionHeader, TopBar, Txt } from '@/components/ui';
 import { looks, products } from '@/data/catalog';
 import { C, R, S } from '@/theme';
-import { art } from '@/theme/assets';
 
 const FILTERS = ['All', 'Sofas', 'Chairs', 'Ottomans', 'Lighting', 'Decor', 'Under $500'];
 
@@ -35,10 +34,10 @@ export default function Discover() {
 
         <Pressable onPress={() => router.push(`/look/${hero.id}`)} style={{ marginHorizontal: S.gutter, marginTop: S.lg }}>
           <View style={[styles.heroImg, { height: (W - S.gutter * 2) * 1.12 }]}>
-            <Image source={art[hero.image]} style={StyleSheet.absoluteFill} contentFit="cover" />
-            <LinearGradient colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.55)']} style={[StyleSheet.absoluteFill, { top: '50%' }]} />
+            <LookThumb look={hero} width={W - S.gutter * 2} height={(W - S.gutter * 2) * 1.12} style={StyleSheet.absoluteFill} />
+            <LinearGradient colors={['rgba(250,248,245,0)', C.canvas]} style={[StyleSheet.absoluteFill, { top: '62%' }]} />
             <View style={styles.heroText}>
-              <Txt v="title" style={{ color: C.white }}>{hero.title}</Txt>
+              <Txt v="title">{hero.title}</Txt>
             </View>
           </View>
         </Pressable>
@@ -48,7 +47,7 @@ export default function Discover() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, gap: S.md }}>
             {rest.map((l) => (
               <Pressable key={l.id} onPress={() => router.push(`/look/${l.id}`)} style={{ width: 176 }}>
-                <Image source={art[l.image]} style={{ width: 176, height: 226, borderRadius: R.md }} contentFit="cover" />
+                <LookThumb look={l} width={176} height={226} style={{ borderRadius: R.md }} />
                 <Txt v="bodyMedium" style={{ fontSize: 14, marginTop: 10 }}>{l.title}</Txt>
               </Pressable>
             ))}

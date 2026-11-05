@@ -4,9 +4,10 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { LookThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
 import { BackButton, BagButton, Button, Divider, HeartButton, TopBar, Txt } from '@/components/ui';
-import { lookById, productById } from '@/data/catalog';
+import { lookById, lookProducts } from '@/data/catalog';
 import { newSpaceId, useStore } from '@/state/store';
 import { C, R, S, money } from '@/theme';
 import { art } from '@/theme/assets';
@@ -17,17 +18,12 @@ export default function LookScreen() {
   const { dispatch } = useStore();
   const insets = useSafeAreaInsets();
   const W = useFrameWidth();
-  const items = look.productIds.map(productById);
+  const items = lookProducts(look);
   const total = items.reduce((s, p) => s + p.price, 0);
 
+  // Starts a space from the look: the same room and the same pieces, where the look put them.
   const tryIt = () => {
     const sid = newSpaceId();
-    const placements: Record<string, [number, number, number]> = {
-      rug: [0.5, 0.86, 0.68], bed: [0.5, 0.71, 0.72], dresser: [0.5, 0.66, 0.46],
-      'hazel-chair': [0.3, 0.73, 0.34], floorlamp: [0.83, 0.55, 0.42], coffeetable: [0.5, 0.85, 0.34], plant: [0.15, 0.7, 0.3],
-      artprint: [0.5, 0.36, 0.22], pendant: [0.5, 0.17, 0.24], sidetable: [0.6, 0.79, 0.17], tablelamp: [0.4, 0.47, 0.16],
-      mirror: [0.82, 0.6, 0.36], bookshelf: [0.16, 0.54, 0.4],
-    };
     dispatch({
       t: 'space/add',
       space: {
@@ -35,18 +31,9 @@ export default function LookScreen() {
         name: `${look.title}, my way`,
         kind: 'photo',
         subtitle: 'Your photo',
-        image: 'room_studio',
-        light: 'day',
+        image: look.backdrop,
         edited: 'Just now',
-        stickers: items.map((p, i) => {
-          const byCategory: Partial<Record<typeof p.category, [number, number, number]>> = {
-            Sofas: [0.5, 0.71, 0.64],
-            Chairs: [0.8, 0.72, 0.34],
-            Ottomans: [0.5, 0.85, 0.32],
-          };
-          const [x, y, size] = placements[p.id] ?? byCategory[p.category] ?? [0.5, 0.6, 0.3];
-          return { uid: `${sid}-${i}`, productId: p.id, x, y, size };
-        }),
+        stickers: look.pieces.map((x, i) => ({ uid: `${sid}-${i}`, ...x })),
       },
     });
     router.push(`/room/${sid}`);
@@ -56,7 +43,7 @@ export default function LookScreen() {
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <TopBar left={<BackButton />} right={<><Feather name="share" size={20} color={C.text} style={{ padding: 10 }} /><BagButton /></>} />
       <ScrollView contentContainerStyle={{ paddingBottom: 120 + insets.bottom }}>
-        <Image source={art[look.image]} style={{ width: W, height: W * 1.25 }} contentFit="cover" />
+        <LookThumb look={look} width={W} height={W * 1.25} />
         <View style={{ padding: S.gutter }}>
           <Txt v="title">{look.title}</Txt>
           <Txt v="small" style={{ marginTop: 6 }}>{look.author}</Txt>
