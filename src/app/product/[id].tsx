@@ -22,7 +22,7 @@ export default function ProductScreen() {
   const [color, setColor] = useState(0);
   const [added, setAdded] = useState(false);
   const [placing, setPlacing] = useState(false);
-  const seenIn = looks.filter((l) => l.pieces.some((x) => x.productId === p.id));
+  const seenIn = looks.filter((l) => l.productIds.includes(p.id));
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>

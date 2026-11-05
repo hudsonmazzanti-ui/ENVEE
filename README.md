@@ -6,7 +6,7 @@ Clickable look-and-feel prototype of ENVEE. ENVEE lets new grads and renters dec
 
 - **Real furniture:** 74 sofas, chairs and ottomans from the Paula Deen Home Spring 2026 catalog, cut out of the catalog photos (`assets/catalog`, data in `src/data/paulaDeen.ts`). Names, dimensions and fabrics are from the catalog; **prices are placeholders** (the catalog lists none).
 - **Illustrated placeholders:** lamps, rugs, decor, beds and other pieces from invented stores are generated illustrations (`assets/art`).
-- **Line art:** the app's chrome is drawn in the welcome room's Hairline style (`assets/line`): the sample rooms behind spaces and looks, empty states, new-space options and the order-confirmed screen. Photos and product cut-outs are never drawn over. Looks are composed live from a line-art room and real product cut-outs.
+- **Line art:** the app's chrome is drawn in the welcome room's Hairline style (`assets/line`): the sample rooms behind spaces and looks, empty states, new-space options and the order-confirmed screen. Photos and product cut-outs are never drawn over. The sample spaces and looks start with line-art furniture drawn into the room, in the room's own view; pasted pieces go on top as photos.
 
 Built with Expo SDK 58, TypeScript and Expo Router.
 

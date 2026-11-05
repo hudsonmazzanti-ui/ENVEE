@@ -81,7 +81,7 @@ function FeatureSpace({ space, width }: { space: Space; width: number }) {
       <View style={[styles.row, { marginTop: 12, alignItems: 'flex-end' }]}>
         <View style={{ flex: 1 }}>
           <Txt v="heading">{space.name}</Txt>
-          <Txt v="small" style={{ marginTop: 2 }}>{money(spaceTotal(space))}</Txt>
+          <Txt v="small" style={{ marginTop: 2 }}>{space.stickers.length ? money(spaceTotal(space)) : 'No pieces yet'}</Txt>
         </View>
         <Feather name="arrow-right" size={18} color={C.text} style={{ paddingBottom: 4 }} />
       </View>
@@ -97,7 +97,7 @@ function SmallSpace({ space, width }: { space: Space; width: number }) {
         <SpaceThumb space={space} width={width} height={h} />
       </View>
       <Txt v="bodyMedium" style={{ marginTop: 8, fontSize: 14 }} numberOfLines={1}>{space.name}</Txt>
-      <Txt v="small" style={{ fontSize: 12 }}>{money(spaceTotal(space))}</Txt>
+      <Txt v="small" style={{ fontSize: 12 }}>{space.stickers.length ? money(spaceTotal(space)) : 'No pieces yet'}</Txt>
     </Pressable>
   );
 }

@@ -21,7 +21,7 @@ export default function LookScreen() {
   const items = lookProducts(look);
   const total = items.reduce((s, p) => s + p.price, 0);
 
-  // Starts a space from the look: the same room and the same pieces, where the look put them.
+  // Starts a space on the look's furnished room. Pasted pieces go on top.
   const tryIt = () => {
     const sid = newSpaceId();
     dispatch({
@@ -33,7 +33,7 @@ export default function LookScreen() {
         subtitle: 'Your photo',
         image: look.backdrop,
         edited: 'Just now',
-        stickers: look.pieces.map((x, i) => ({ uid: `${sid}-${i}`, ...x })),
+        stickers: [],
       },
     });
     router.push(`/room/${sid}`);

@@ -11,7 +11,7 @@ export type Space = {
   name: string;
   kind: 'photo' | 'listing';
   subtitle: string;
-  /** The line-art room shown until there is a photo. */
+  /** The line-art room shown until there is a photo. The samples start furnished in line art, with no pieces placed. */
   image: RoomKey;
   /** A photo the user picked or took. Overrides `image` when set. */
   photoUri?: string;
@@ -38,38 +38,27 @@ const initial: State = {
       name: 'My bedroom',
       kind: 'photo',
       subtitle: 'Your photo',
-      image: 'room_bedroom',
+      image: 'space_bedroom',
       edited: 'Edited 2h ago',
-      stickers: [
-        st('bed', 0.5, 0.71, 0.72),
-        st('pendant', 0.5, 0.17, 0.26),
-        st('sidetable', 0.12, 0.77, 0.2),
-        st('tablelamp', 0.12, 0.64, 0.2),
-        st('plant', 0.88, 0.72, 0.3),
-      ],
+      stickers: [],
     },
     {
       id: 'atlantic',
       name: '412 Atlantic Ave, 3F',
       kind: 'listing',
       subtitle: 'Rental listing · 2 bed',
-      image: 'room_listing',
+      image: 'space_listing',
       edited: 'Edited yesterday',
-      stickers: [
-        st('rug', 0.5, 0.85, 0.72),
-        st('mallory-sofa', 0.5, 0.72, 0.66),
-        st('floorlamp', 0.83, 0.55, 0.42),
-        st('artprint', 0.5, 0.38, 0.24),
-      ],
+      stickers: [],
     },
     {
       id: 'living',
       name: 'Living room',
       kind: 'photo',
       subtitle: 'Your photo',
-      image: 'room_living',
+      image: 'space_living',
       edited: 'Edited Sunday',
-      stickers: [st('hazel-chair', 0.28, 0.72, 0.34), st('walker-ottoman-ivory', 0.55, 0.83, 0.3), st('plant', 0.84, 0.72, 0.3)],
+      stickers: [],
     },
   ],
 };

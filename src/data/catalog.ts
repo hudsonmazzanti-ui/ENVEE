@@ -69,52 +69,26 @@ export const products: Product[] = [...paulaDeenProducts, ...illustrated];
 
 export const productById = (id: string) => products.find((x) => x.id === id) ?? products[0];
 
-/** A piece placed in a room: centre x and y as fractions of the room, size as a fraction of its width. */
-export type Placement = { productId: string; x: number; y: number; size: number };
-
 export type Look = {
   id: string;
   title: string;
   author: string;
   room: string;
-  /** The line-art room the look is composed on. Its pieces are the real product cut-outs, placed live. */
+  /** The look's line-art room, its furniture drawn in. */
   backdrop: RoomKey;
-  pieces: Placement[];
+  productIds: string[];
 };
 
-// Placements as [productId, x, y, size] in a 900 x 1200 room, converted to fractions below.
-const look = (id: string, title: string, author: string, room: string, backdrop: RoomKey, items: [string, number, number, number][]): Look => ({
-  id,
-  title,
-  author,
-  room,
-  backdrop,
-  pieces: items.map(([productId, x, y, size]) => ({ productId, x: x / 900, y: y / 1200, size: size / 900 })),
-});
-
 export const looks: Look[] = [
-  look('emerald', 'The Emerald Edit', '@nora.lives', 'Living room · 540 sq ft', 'room_living', [
-    ['rug', 450, 1010, 640], ['mallory-sofa', 450, 840, 620], ['floorlamp', 760, 640, 420],
-    ['coffeetable', 450, 1010, 300], ['plant', 140, 800, 300], ['artprint', 450, 470, 200],
-  ]),
-  look('warm', 'Soft Landing', '@theo.firstplace', 'Bedroom · 120 sq ft', 'room_bedroom', [
-    ['bed', 450, 840, 640], ['pendant', 450, 220, 230], ['sidetable', 110, 900, 170], ['tablelamp', 110, 760, 170], ['plant', 800, 860, 260],
-  ]),
-  look('gallery', 'The Reading Corner', '@jules.at.home', 'Studio · 410 sq ft', 'room_studio', [
-    ['rug', 450, 1020, 600], ['hazel-chair', 310, 880, 330], ['sidetable', 540, 950, 150],
-    ['mirror', 730, 700, 330], ['bookshelf', 150, 640, 380], ['pendant', 480, 210, 200],
-  ]),
-  look('first', 'First Place, Done Right', '@sam.rents', 'Bedroom · 140 sq ft', 'room_listing', [
-    ['dresser', 450, 780, 420], ['artprint', 450, 430, 200], ['tablelamp', 360, 560, 140], ['bridget-swivel-chair', 740, 910, 300], ['plant', 150, 860, 280],
-  ]),
-  look('savannah', 'Savannah Sunday', '@ellie.unpacks', 'Living room · 480 sq ft', 'room_listing', [
-    ['blair-sofa', 450, 845, 640], ['lowell-ottoman-green', 450, 1035, 340], ['della-chair-rosella', 790, 905, 300],
-    ['floorlamp', 120, 700, 380], ['plant', 870, 760, 260], ['artprint', 450, 470, 200],
-  ]),
+  { id: 'emerald', title: 'The Emerald Edit', author: '@nora.lives', room: 'Living room · 540 sq ft', backdrop: 'look_emerald', productIds: ['mallory-sofa', 'rug', 'floorlamp', 'coffeetable', 'plant', 'artprint'] },
+  { id: 'warm', title: 'Soft Landing', author: '@theo.firstplace', room: 'Bedroom · 120 sq ft', backdrop: 'look_warm', productIds: ['bed', 'pendant', 'sidetable', 'tablelamp', 'plant'] },
+  { id: 'gallery', title: 'The Reading Corner', author: '@jules.at.home', room: 'Studio · 410 sq ft', backdrop: 'look_gallery', productIds: ['rug', 'hazel-chair', 'sidetable', 'mirror', 'bookshelf', 'pendant'] },
+  { id: 'first', title: 'First Place, Done Right', author: '@sam.rents', room: 'Bedroom · 140 sq ft', backdrop: 'look_first', productIds: ['dresser', 'artprint', 'tablelamp', 'bridget-swivel-chair', 'plant'] },
+  { id: 'savannah', title: 'Savannah Sunday', author: '@ellie.unpacks', room: 'Living room · 480 sq ft', backdrop: 'look_savannah', productIds: ['blair-sofa', 'lowell-ottoman-green', 'della-chair-rosella', 'floorlamp', 'plant', 'artprint'] },
 ];
 
-/** The products in a look, in the order they were placed. */
-export const lookProducts = (l: Look) => l.pieces.map((x) => productById(x.productId));
+/** The products in a look. */
+export const lookProducts = (l: Look) => l.productIds.map(productById);
 
 export const lookById = (id: string) => looks.find((x) => x.id === id) ?? looks[0];
 
