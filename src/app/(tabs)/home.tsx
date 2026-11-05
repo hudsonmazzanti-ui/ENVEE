@@ -2,6 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
+import { RoomScene } from '@/components/hairline/RoomScene';
 import { SpaceThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
 import { BagButton, ProductCard, SectionHeader, TopBar, Txt, Wordmark } from '@/components/ui';
@@ -72,20 +73,22 @@ export default function Home() {
 }
 
 function FeatureSpace({ space, width }: { space: Space; width: number }) {
-  const h = width * 0.78;
+  // The Hairline room keeps the figure's 5:4 frame. Tap it, or drag all the way across, to open the room.
+  const h = width * 0.8;
+  const open = () => router.push(`/room/${space.id}`);
   return (
-    <Pressable onPress={() => router.push(`/room/${space.id}`)} style={{ marginHorizontal: S.gutter }}>
-      <View style={[styles.featureImg, { height: h }, shadow]}>
-        <SpaceThumb space={space} width={width} height={h} />
+    <View style={{ marginHorizontal: S.gutter }}>
+      <View style={[styles.featureImg, styles.featureScene, { height: h }, shadow]}>
+        <RoomScene onOpen={open} style={{ width, height: h }} />
       </View>
-      <View style={[styles.row, { marginTop: 12, alignItems: 'flex-end' }]}>
+      <Pressable onPress={open} style={[styles.row, { marginTop: 12, alignItems: 'flex-end' }]}>
         <View style={{ flex: 1 }}>
           <Txt v="heading">{space.name}</Txt>
           <Txt v="small" style={{ marginTop: 2 }}>{money(spaceTotal(space))}</Txt>
         </View>
         <Feather name="arrow-right" size={18} color={C.text} style={{ paddingBottom: 4 }} />
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   );
 }
 
@@ -105,6 +108,7 @@ function SmallSpace({ space, width }: { space: Space; width: number }) {
 const styles = StyleSheet.create({
   row: { flexDirection: 'row', gap: S.md },
   featureImg: { borderRadius: R.lg, overflow: 'hidden', backgroundColor: C.surface },
+  featureScene: { backgroundColor: C.canvas, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line },
   pill: {
     position: 'absolute',
     top: 12,
