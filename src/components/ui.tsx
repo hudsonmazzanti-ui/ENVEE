@@ -17,7 +17,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Product } from '@/data/catalog';
 import { useStore } from '@/state/store';
 import { C, F, R, S, money } from '@/theme';
-import { art } from '@/theme/assets';
 
 export type IconName = React.ComponentProps<typeof Feather>['name'];
 
@@ -198,7 +197,7 @@ export function ProductCard({ product, width, onPress }: { product: Product; wid
   return (
     <Pressable onPress={onPress ?? (() => router.push(`/product/${product.id}`))} style={{ width }}>
       <View style={[styles.productImg, { width, height: width * 1.15 }]}>
-        <Image source={art[product.photo]} style={{ width: '86%', height: '86%' }} contentFit="contain" />
+        <Image source={product.photo} style={{ width: '86%', height: '86%' }} contentFit="contain" />
         <View style={{ position: 'absolute', top: 8, right: 8 }}>
           <HeartButton id={product.id} light />
         </View>

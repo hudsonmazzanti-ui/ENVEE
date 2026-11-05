@@ -6,7 +6,6 @@ import { StickerImage } from '@/components/StickerImage';
 import { productById } from '@/data/catalog';
 import { Placed, Space, spaceSource } from '@/state/store';
 import { C } from '@/theme';
-import { art } from '@/theme/assets';
 
 export const ROOM_RATIO = 4 / 3; // height / width of room photos
 
@@ -111,7 +110,7 @@ function StickerView({
           transform: pan.getTranslateTransform(),
         },
       ]}>
-      <StickerImage source={art[product.sticker]} />
+      <StickerImage source={product.sticker} />
       {selected ? (
         <View pointerEvents="none" style={styles.selection}>
           <View style={[styles.handle, { top: -5, left: -5 }]} />

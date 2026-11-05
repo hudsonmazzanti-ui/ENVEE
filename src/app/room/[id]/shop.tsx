@@ -49,7 +49,7 @@ export default function ShopRoom() {
             <View key={pid}>
               <View style={styles.row}>
                 <Pressable onPress={() => router.push(`/product/${pid}`)} style={styles.thumb}>
-                  <Image source={art[p.photo]} style={{ width: 62, height: 62 }} contentFit="contain" />
+                  <Image source={p.photo} style={{ width: 62, height: 62 }} contentFit="contain" />
                 </Pressable>
                 <Pressable onPress={() => router.push(`/product/${pid}`)} style={{ flex: 1 }}>
                   <Txt v="eyebrow" style={{ fontSize: 10 }}>{p.retailer}</Txt>
@@ -57,7 +57,7 @@ export default function ShopRoom() {
                 </Pressable>
                 <View style={{ alignItems: 'flex-end', gap: 6 }}>
                   <Txt v="price">{money(p.price)}</Txt>
-                  {/* Pieces with an affiliate link are bought on the retailer's site. */}
+                  {/* Pieces with a shop link are bought on the retailer's site. */}
                   {p.shopUrl ? <Button small label="Shop" icon="arrow-up-right" onPress={() => Linking.openURL(p.shopUrl!)} /> : null}
                 </View>
               </View>

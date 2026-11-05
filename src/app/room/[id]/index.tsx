@@ -12,7 +12,6 @@ import { productById } from '@/data/catalog';
 import { pickRoomPhoto } from '@/lib/pickPhoto';
 import { spaceTotal, useStore } from '@/state/store';
 import { C, F, R, S, money, shadow } from '@/theme';
-import { art } from '@/theme/assets';
 
 export default function RoomEditor() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -76,7 +75,7 @@ export default function RoomEditor() {
             <View style={[styles.selCard, shadow, { top: Math.min(canvasH - 150, 16) }]}>
               <Pressable style={styles.selInfo} onPress={() => router.push(`/product/${selProduct.id}`)}>
                 <View style={styles.selThumb}>
-                  <Image source={art[selProduct.photo]} style={{ width: 40, height: 40 }} contentFit="contain" />
+                  <Image source={selProduct.photo} style={{ width: 40, height: 40 }} contentFit="contain" />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Txt v="body" style={{ fontSize: 14 }} numberOfLines={1}>{selProduct.name}</Txt>
@@ -110,7 +109,7 @@ export default function RoomEditor() {
             const on = s.uid === selected;
             return (
               <Pressable key={s.uid} onPress={() => setSelected(on ? null : s.uid)} style={[styles.trayItem, on && { borderColor: C.accent, borderWidth: 1.5 }]}>
-                <Image source={art[p.photo]} style={{ width: 54, height: 54 }} contentFit="contain" />
+                <Image source={p.photo} style={{ width: 54, height: 54 }} contentFit="contain" />
                 <Txt v="small" style={{ fontSize: 11, color: C.text }}>{money(p.price)}</Txt>
               </Pressable>
             );
