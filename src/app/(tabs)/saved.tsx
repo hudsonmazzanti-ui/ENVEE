@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { LookThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
-import { BagButton, Button, ProductCard, TopBar, Txt } from '@/components/ui';
+import { Button, ProductCard, TopBar, Txt } from '@/components/ui';
 import { looks, productById } from '@/data/catalog';
 import { useStore } from '@/state/store';
 import { C, F, R, S } from '@/theme';
@@ -20,7 +20,7 @@ export default function Saved() {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar left={<Txt v="heading" style={{ marginLeft: 8 }}>Saved</Txt>} right={<BagButton />} />
+      <TopBar left={<Txt v="heading" style={{ marginLeft: 8 }}>Saved</Txt>} />
       <View style={styles.seg}>
         {(['pieces', 'looks'] as const).map((t) => (
           <Pressable key={t} onPress={() => setTab(t)} style={[styles.segItem, tab === t && styles.segOn]}>

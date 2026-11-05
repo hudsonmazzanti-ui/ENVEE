@@ -20,7 +20,6 @@ export type Space = {
 };
 
 type State = {
-  bag: Record<string, number>;
   saved: string[];
   spaces: Space[];
 };
@@ -30,8 +29,7 @@ const uid = () => `u${n++}`;
 const st = (productId: string, x: number, y: number, size: number): Placed => ({ uid: uid(), productId, x, y, size });
 
 const initial: State = {
-  bag: { artprint: 1, pendant: 2 },
-  saved: ['mallory-sofa', 'della-chair-rosella', 'walker-ottoman-ivory', 'mirror', 'floorlamp', 'hazel-chair'],
+  saved: ['sofa', 'armchair', 'mirror', 'floorlamp', 'rug', 'pendant'],
   spaces: [
     {
       id: 'bedroom',
@@ -64,9 +62,6 @@ const initial: State = {
 };
 
 type Action =
-  | { t: 'bag/add'; id: string; qty?: number }
-  | { t: 'bag/set'; id: string; qty: number }
-  | { t: 'bag/clear' }
   | { t: 'save/toggle'; id: string }
   | { t: 'space/add'; space: Space }
   | { t: 'space/photo'; spaceId: string; uri: string }
@@ -84,16 +79,6 @@ function mapSpace(s: State, id: string, fn: (sp: Space) => Space): State {
 
 function reducer(s: State, a: Action): State {
   switch (a.t) {
-    case 'bag/add':
-      return { ...s, bag: { ...s.bag, [a.id]: (s.bag[a.id] ?? 0) + (a.qty ?? 1) } };
-    case 'bag/set': {
-      const bag = { ...s.bag };
-      if (a.qty <= 0) delete bag[a.id];
-      else bag[a.id] = a.qty;
-      return { ...s, bag };
-    }
-    case 'bag/clear':
-      return { ...s, bag: {} };
     case 'save/toggle':
       return {
         ...s,
@@ -146,9 +131,8 @@ export function useStore() {
 export function defaultSize(productId: string) {
   const p = productById(productId);
   if (productId === 'rug') return 0.6;
-  if (p.category === 'Sofas') return parseInt(p.dims, 10) >= 150 ? 0.82 : parseInt(p.dims, 10) <= 70 ? 0.46 : 0.62;
+  if (p.category === 'Sofas') return parseInt(p.dims, 10) >= 100 ? 0.82 : parseInt(p.dims, 10) <= 70 ? 0.46 : 0.62;
   if (p.category === 'Chairs') return 0.36;
-  if (p.category === 'Ottomans') return 0.32;
   return 0.4;
 }
 
@@ -157,6 +141,5 @@ export const spaceSource = (sp: Space, width?: number): ImageSource | number => 
 
 export const spaceTotal = (sp: Space) => sp.stickers.reduce((sum, x) => sum + productById(x.productId).price, 0);
 
-export const bagCount = (s: State) => Object.values(s.bag).reduce((a, b) => a + b, 0);
 
 export const newSpaceId = () => `space${n++}`;

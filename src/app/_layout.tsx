@@ -30,7 +30,6 @@ export default function RootLayout() {
             <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
             <Stack.Screen name="paste" options={{ presentation: 'modal' }} />
             <Stack.Screen name="new-space" options={{ presentation: 'modal' }} />
-            <Stack.Screen name="confirmed" options={{ animation: 'fade', gestureEnabled: false }} />
           </Stack>
         </View>
       </View>

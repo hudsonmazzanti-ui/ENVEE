@@ -4,7 +4,7 @@
  * SVG with its colours baked in, so the app shows them through expo-image with no WebView.
  *
  * Each scene: { name, ground, view: [w, h], cam: [az, k, S], fit: [points, cx, cy], sw, bg, draw(api) }
- *   ground  "linen" (stone lines, one emerald stroke) or "emerald" (the welcome's ivory lines)
+ *   ground  "linen" (stone lines, one emerald stroke) or "emerald" (the welcome's ivory lines, for full-screen moments)
  *   sw      stroke width in viewBox units. Strokes scale with the image, so this is set for its display size;
  *           a scene can list `variants: { sm: sw }` for a heavier copy used in small thumbnails
  *   bg      true paints a full-bleed ground rect, so the SVG stands in for a room photo
@@ -345,31 +345,6 @@
     add(onTop(rrect(26, 26, 84, 52, 4, 4), 0), "nf dash");
     const t = 6, c = [[26, 26, 1, 1], [84, 26, -1, 1], [26, 52, 1, -1], [84, 52, -1, -1]];
     c.forEach(([x, y, sx, sy], i) => add(lines([[[x, y, 0], [x + sx * t, y, 0]], [[x, y, 0], [x, y + sy * t, 0]]]), i === 3 ? "nf hi" : "nf sil"));
-  } });
-
-  // Bag, empty (emerald): a tote standing open, and a second one folded flat beside it.
-  scenes.push({ ...ISO, name: "empty-bag", ground: "emerald", cam: [45, 0.5, 2.9], fit: [[[0, 0, 0], [70, 40, 0], [0, 40, 0], [70, 0, 0], [30, 8, 66], [0, 0, 44]], 200, 170], draw({ add }) {
-    const handle = (y) => {
-      const pts = [];
-      for (let i = 0; i <= 20; i++) { const a = rad((180 * i) / 20); pts.push([22 + 9 * Math.cos(a), y, 44 + 12 * Math.sin(a)]); }
-      return (P) => ({ sil: open(pts.map((p) => P(...p))), crease: "" });
-    };
-    add(handle(1.5), "nf sil");
-    add(box(0, 0, 44, 12, 2.2, 1, 0, 44));
-    add(handle(10.5), "nf hi");
-    add(box(40, 22, 70, 40, 2, 1, 0, 1.6));
-    add(lines([[[40.8, 31, 1.6], [69.2, 31, 1.6]]]), "nf lo");
-  } });
-
-  // Order confirmed (emerald): boxes stacked to go, the top one taped bright.
-  scenes.push({ ...ISO, name: "confirmed", ground: "emerald", cam: [45, 0.5, 2.75], fit: [[[0, 0, 0], [66, 34, 0], [0, 34, 0], [66, 0, 0], [6, 4, 48], [0, 0, 28]], 200, 166], draw({ add }) {
-    const tape = (x0, x1, y, z) => lines([[[x0, y, z], [x1, y, z]]]);
-    add(box(0, 0, 40, 32, 1.6, 1, 0, 28));
-    add(tape(0.6, 39.4, 16, 28), "nf lo");
-    add(box(6, 4, 32, 26, 1.4, 0.8, 28, 46));
-    add(tape(6.6, 31.4, 15, 46), "nf hi");
-    add(box(46, 14, 66, 34, 1.4, 0.8, 0, 16));
-    add(tape(46.6, 65.4, 24, 16), "nf lo");
   } });
 
   // ---------------------------------------------------------------- new space options (portrait)

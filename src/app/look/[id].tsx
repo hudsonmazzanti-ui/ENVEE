@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LookThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
-import { BackButton, BagButton, Button, Divider, HeartButton, TopBar, Txt } from '@/components/ui';
+import { BackButton, Button, Divider, HeartButton, TopBar, Txt } from '@/components/ui';
 import { lookById, lookProducts } from '@/data/catalog';
 import { newSpaceId, useStore } from '@/state/store';
 import { C, R, S, money } from '@/theme';
@@ -19,7 +19,6 @@ export default function LookScreen() {
   const insets = useSafeAreaInsets();
   const W = useFrameWidth();
   const items = lookProducts(look);
-  const total = items.reduce((s, p) => s + p.price, 0);
 
   // Starts a space on the look's furnished room. Pasted pieces go on top.
   const tryIt = () => {
@@ -41,7 +40,7 @@ export default function LookScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar left={<BackButton />} right={<><Feather name="share" size={20} color={C.text} style={{ padding: 10 }} /><BagButton /></>} />
+      <TopBar left={<BackButton />} right={<><Feather name="share" size={20} color={C.text} style={{ padding: 10 }} /></>} />
       <ScrollView contentContainerStyle={{ paddingBottom: 120 + insets.bottom }}>
         <LookThumb look={look} width={W} height={W * 1.25} />
         <View style={{ padding: S.gutter }}>
@@ -63,15 +62,7 @@ export default function LookScreen() {
         ))}
       </ScrollView>
       <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 14) }]}>
-        <Button kind="secondary" label="Try it" icon="image" onPress={tryIt} style={{ flex: 1, paddingHorizontal: 12 }} />
-        <Button
-          label={`Add all · ${money(total)}`}
-          style={{ flex: 1, paddingHorizontal: 12 }}
-          onPress={() => {
-            items.forEach((p) => dispatch({ t: 'bag/add', id: p.id }));
-            router.push('/bag');
-          }}
-        />
+        <Button label="Try it in a room" icon="image" onPress={tryIt} style={{ flex: 1, paddingHorizontal: 12 }} />
       </View>
     </View>
   );

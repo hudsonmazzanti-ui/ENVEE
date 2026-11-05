@@ -4,9 +4,8 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { SpaceThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
-import { BagButton, ProductCard, SectionHeader, TopBar, Txt, Wordmark } from '@/components/ui';
+import { ProductCard, SectionHeader, TopBar, Txt, Wordmark } from '@/components/ui';
 import { products } from '@/data/catalog';
-import { paulaDeenProducts } from '@/data/paulaDeen';
 import { Space, spaceTotal, useStore } from '@/state/store';
 import { C, R, S, money, shadow } from '@/theme';
 
@@ -20,7 +19,6 @@ export default function Home() {
     <View style={{ flex: 1, backgroundColor: C.bg }}>
       <TopBar
         left={<Wordmark size={15} style={{ marginLeft: 8 }} />}
-        right={<BagButton />}
       />
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false}>
         <View style={{ paddingHorizontal: S.gutter, paddingTop: S.lg, paddingBottom: S.xl }}>
@@ -50,9 +48,9 @@ export default function Home() {
 
 
         <View style={{ marginTop: S.xxl }}>
-          <SectionHeader title="Paula Deen Home" action="See all" onAction={() => router.push('/discover')} />
+          <SectionHeader title="For your living room" action="See all" onAction={() => router.push('/discover')} />
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: S.gutter, gap: S.md }}>
-            {paulaDeenProducts.filter((p) => ['mallory-sofa', 'della-chair-rosella', 'estelle-glider-coral', 'mabel-settee-bee', 'walker-ottoman-ivory', 'hazel-chair', 'belle-sofa'].includes(p.id)).map((p) => (
+            {products.filter((p) => ['sofa', 'armchair', 'coffeetable', 'floorlamp', 'rug', 'chair', 'plant'].includes(p.id)).map((p) => (
               <ProductCard key={p.id} product={p} width={150} />
             ))}
           </ScrollView>

@@ -6,11 +6,11 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import { LookThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
-import { BagButton, Chip, ProductCard, SectionHeader, TopBar, Txt } from '@/components/ui';
+import { Chip, ProductCard, SectionHeader, TopBar, Txt } from '@/components/ui';
 import { looks, products } from '@/data/catalog';
 import { C, R, S } from '@/theme';
 
-const FILTERS = ['All', 'Sofas', 'Chairs', 'Ottomans', 'Lighting', 'Decor', 'Under $500'];
+const FILTERS = ['All', 'Sofas', 'Chairs', 'Lighting', 'Decor', 'Under $500'];
 
 export default function Discover() {
   const W = useFrameWidth();
@@ -23,7 +23,7 @@ export default function Discover() {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar left={<Txt v="heading" style={{ marginLeft: 8 }}>Discover</Txt>} right={<BagButton />} />
+      <TopBar left={<Txt v="heading" style={{ marginLeft: 8 }}>Discover</Txt>} />
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }} showsVerticalScrollIndicator={false} stickyHeaderIndices={[3]}>
         <View style={{ paddingHorizontal: S.gutter, paddingTop: 4 }}>
           <View style={styles.search}>

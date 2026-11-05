@@ -101,7 +101,9 @@ export default function Paste() {
               <Txt v="price" style={{ marginTop: 4 }}>{money(product.price)}</Txt>
               <Button label="Add to room" icon="plus" style={{ marginTop: S.lg }} onPress={() => {
                 dispatch({ t: 'sticker/add', spaceId: space.id, productId: product.id });
-                router.back();
+                // Opened straight from a link (e.g. on web) there is no screen to go back to, so open the room.
+                if (router.canGoBack()) router.back();
+                else router.replace(`/room/${space.id}`);
               }} />
             </View>
           </Animated.View>

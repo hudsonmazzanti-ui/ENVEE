@@ -8,7 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LookThumb } from '@/components/SpaceThumb';
 import { useFrameWidth } from '@/components/useFrameWidth';
-import { BackButton, BagButton, Button, Divider, HeartButton, IconName, TopBar, Txt } from '@/components/ui';
+import { BackButton, Button, Divider, HeartButton, IconName, TopBar, Txt } from '@/components/ui';
 import { looks, productById } from '@/data/catalog';
 import { spaceSource, useStore } from '@/state/store';
 import { C, R, S, money } from '@/theme';
@@ -21,7 +21,6 @@ export default function ProductScreen() {
   const insets = useSafeAreaInsets();
   const W = useFrameWidth();
   const [color, setColor] = useState(0);
-  const [added, setAdded] = useState(false);
   const [placing, setPlacing] = useState(false);
   const seenIn = looks.filter((l) => l.productIds.includes(p.id));
   // Affiliate products are bought on the retailer's site; this opens it (a new tab on web).
@@ -31,7 +30,7 @@ export default function ProductScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar left={<BackButton />} right={<><HeartButton id={p.id} /><BagButton /></>} />
+      <TopBar left={<BackButton />} right={<HeartButton id={p.id} />} />
       <ScrollView contentContainerStyle={{ paddingBottom: 130 + insets.bottom }} showsVerticalScrollIndicator={false}>
         <View style={[styles.hero, { height: W * 0.95 }]}>
           <Image source={art[p.photo]} style={{ width: '78%', height: '78%' }} contentFit="contain" />
@@ -111,21 +110,8 @@ export default function ProductScreen() {
 
       {!placing ? (
         <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 14) }]}>
-          <Button kind="secondary" label="Try it" icon="image" onPress={() => setPlacing(true)} style={{ flex: 1, paddingHorizontal: 12 }} />
-          {p.shopUrl ? (
-            <Button label="Shop" icon="arrow-up-right" style={{ flex: 1, paddingHorizontal: 12 }} onPress={shop} />
-          ) : (
-          <Button
-            label={added ? 'Added' : 'Add to bag'}
-            icon={added ? 'check' : undefined}
-            style={{ flex: 1, paddingHorizontal: 12 }}
-            onPress={() => {
-              dispatch({ t: 'bag/add', id: p.id });
-              setAdded(true);
-              setTimeout(() => setAdded(false), 1600);
-            }}
-          />
-          )}
+          <Button kind={p.shopUrl ? 'secondary' : 'primary'} label="Try it" icon="image" onPress={() => setPlacing(true)} style={{ flex: 1, paddingHorizontal: 12 }} />
+          {p.shopUrl ? <Button label="Shop" icon="arrow-up-right" style={{ flex: 1, paddingHorizontal: 12 }} onPress={shop} /> : null}
         </View>
       ) : null}
     </View>

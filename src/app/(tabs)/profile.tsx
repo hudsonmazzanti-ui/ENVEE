@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
-import { BagButton, Divider, IconName, TopBar, Txt } from '@/components/ui';
+import { Divider, IconName, TopBar, Txt } from '@/components/ui';
 import { spaceTotal, useStore } from '@/state/store';
 import { C, R, S, money } from '@/theme';
 
@@ -14,7 +14,7 @@ export default function Profile() {
 
   return (
     <View style={{ flex: 1, backgroundColor: C.bg }}>
-      <TopBar left={<Txt v="heading" style={{ marginLeft: 8 }}>You</Txt>} right={<BagButton />} />
+      <TopBar left={<Txt v="heading" style={{ marginLeft: 8 }}>You</Txt>} />
       <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
         <View style={styles.head}>
           <View style={styles.avatar}>
@@ -49,8 +49,6 @@ export default function Profile() {
         </View>
 
         <View style={{ paddingHorizontal: S.gutter, marginTop: S.lg }}>
-          <Item icon="package" label="Orders" onPress={() => router.push('/bag')} />
-          <Divider />
           <Item icon="shopping-bag" label="Stores" />
           <Divider />
           <Item icon="calendar" label="Move-in" detail="Aug 15" />

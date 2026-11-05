@@ -15,7 +15,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Product } from '@/data/catalog';
-import { bagCount, useStore } from '@/state/store';
+import { useStore } from '@/state/store';
 import { C, F, R, S, money } from '@/theme';
 import { art } from '@/theme/assets';
 
@@ -115,11 +115,6 @@ export function IconButton({
       ) : null}
     </Pressable>
   );
-}
-
-export function BagButton() {
-  const { state } = useStore();
-  return <IconButton name="shopping-bag" label="Bag" badge={bagCount(state)} onPress={() => router.push('/bag')} />;
 }
 
 export function TopBar({

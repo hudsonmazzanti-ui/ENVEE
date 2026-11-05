@@ -1,10 +1,9 @@
 import type { ArtKey } from '@/theme/assets';
 import type { RoomKey } from '@/theme/rooms';
 
-import { paulaDeenProducts } from './paulaDeen';
 
-// Real products from the Paula Deen Home catalog (see paulaDeen.ts), plus illustrated
-// placeholder pieces (lamps, rugs, decor) from invented retailers.
+// Illustrated placeholder pieces from invented retailers, until real affiliate products replace them.
+// A real product sets shopUrl (its affiliate link) and uses its retailer's photo.
 export type Product = {
   id: string;
   name: string;
@@ -14,7 +13,7 @@ export type Product = {
   was?: number;
   sticker: ArtKey;
   photo: ArtKey;
-  category: 'Sofas' | 'Chairs' | 'Ottomans' | 'Living' | 'Bedroom' | 'Lighting' | 'Decor' | 'Storage';
+  category: 'Sofas' | 'Chairs' | 'Living' | 'Bedroom' | 'Lighting' | 'Decor' | 'Storage';
   colors: string[];
   dims: string;
   blurb: string;
@@ -53,6 +52,9 @@ const p = (
 });
 
 const illustrated: Product[] = [
+  p('sofa', 'sofa', 'Emerald Velvet Sofa', 'Hearth & Field', 1490, 'Sofas', ['#1A6A51', '#C9A35A'], '84" W × 36" D × 33" H', 'Deep emerald velvet on tapered brass legs. Two bench cushions, no gap to lose your phone in.', { rating: 4.7, reviews: 386 }),
+  p('armchair', 'armchair', 'Rust Bouclé Armchair', 'Loom House', 640, 'Chairs', ['#A25A31'], '32" W × 34" D × 36" H', 'A rounded back and track arms in warm rust bouclé. Sized for small living rooms.', { rating: 4.6, reviews: 241 }),
+  p('chair', 'chair', 'Oak Spindle Chair', 'Oakline', 210, 'Chairs', ['#D2B184'], '20" W × 21" D × 33" H', 'Solid oak with a spindle back. Works at a desk or a small dining table.', { rating: 4.5, reviews: 158 }),
   p('floorlamp', 'floorlamp', 'Arc Floor Lamp, Brass', 'Studio Nord', 289, 'Lighting', ['#C9A35A', '#1A1A1A'], '72" H × 48" reach', 'A sweeping brass arc on a marble base. Lights a reading corner without a ceiling fixture.', { rating: 4.5, reviews: 528 }),
   p('tablelamp', 'tablelamp', 'Gourd Ceramic Table Lamp', 'Maison Verde', 148, 'Lighting', ['#F3EDE2', '#0F5B45'], '24" H × 14" shade', 'Hand-glazed stoneware base with a pleated linen shade.', { rating: 4.6, reviews: 194 }),
   p('plant', 'plant', 'Faux Fiddle Leaf Fig, 5 ft', 'Greenroom', 119, 'Decor', ['#3E8350'], '60" H, 12" pot', 'All of the drama, none of the watering schedule. Ships in a stone-look planter.', { was: 149, rating: 4.4, reviews: 902 }),
@@ -67,7 +69,7 @@ const illustrated: Product[] = [
   p('bookshelf', 'bookshelf', 'Oak Open Bookshelf', 'Oakline', 260, 'Storage', ['#D2B184'], '32" W × 12" D × 64" H', 'Four deep shelves in solid oak. Anchors to the wall with a renter-safe kit.', { rating: 4.5, reviews: 132 }),
 ];
 
-export const products: Product[] = [...paulaDeenProducts, ...illustrated];
+export const products: Product[] = [...illustrated];
 
 export const productById = (id: string) => products.find((x) => x.id === id) ?? products[0];
 
@@ -82,11 +84,11 @@ export type Look = {
 };
 
 export const looks: Look[] = [
-  { id: 'emerald', title: 'The Emerald Edit', author: '@nora.lives', room: 'Living room · 540 sq ft', backdrop: 'look_emerald', productIds: ['mallory-sofa', 'rug', 'floorlamp', 'coffeetable', 'plant', 'artprint'] },
+  { id: 'emerald', title: 'The Emerald Edit', author: '@nora.lives', room: 'Living room · 540 sq ft', backdrop: 'look_emerald', productIds: ['sofa', 'rug', 'floorlamp', 'coffeetable', 'plant', 'artprint'] },
   { id: 'warm', title: 'Soft Landing', author: '@theo.firstplace', room: 'Bedroom · 120 sq ft', backdrop: 'look_warm', productIds: ['bed', 'pendant', 'sidetable', 'tablelamp', 'plant'] },
-  { id: 'gallery', title: 'The Reading Corner', author: '@jules.at.home', room: 'Studio · 410 sq ft', backdrop: 'look_gallery', productIds: ['rug', 'hazel-chair', 'sidetable', 'mirror', 'bookshelf', 'pendant'] },
-  { id: 'first', title: 'First Place, Done Right', author: '@sam.rents', room: 'Bedroom · 140 sq ft', backdrop: 'look_first', productIds: ['dresser', 'artprint', 'tablelamp', 'bridget-swivel-chair', 'plant'] },
-  { id: 'savannah', title: 'Savannah Sunday', author: '@ellie.unpacks', room: 'Living room · 480 sq ft', backdrop: 'look_savannah', productIds: ['blair-sofa', 'lowell-ottoman-green', 'della-chair-rosella', 'floorlamp', 'plant', 'artprint'] },
+  { id: 'gallery', title: 'The Reading Corner', author: '@jules.at.home', room: 'Studio · 410 sq ft', backdrop: 'look_gallery', productIds: ['rug', 'armchair', 'sidetable', 'mirror', 'bookshelf', 'pendant'] },
+  { id: 'first', title: 'First Place, Done Right', author: '@sam.rents', room: 'Bedroom · 140 sq ft', backdrop: 'look_first', productIds: ['dresser', 'artprint', 'tablelamp', 'chair', 'plant'] },
+  { id: 'savannah', title: 'Savannah Sunday', author: '@ellie.unpacks', room: 'Living room · 480 sq ft', backdrop: 'look_savannah', productIds: ['sofa', 'armchair', 'rug', 'floorlamp', 'plant', 'artprint'] },
 ];
 
 /** The products in a look. */
@@ -96,11 +98,11 @@ export const lookById = (id: string) => looks.find((x) => x.id === id) ?? looks[
 
 // Sample links the "paste" flow pretends to read.
 export const sampleLinks = [
-  { url: 'https://cmfurniture.com/paula-deen/mallory-sofa', productId: 'mallory-sofa' },
-  { url: 'https://cmfurniture.com/paula-deen/estelle-swivel-glider', productId: 'estelle-glider-coral' },
+  { url: 'https://hearthandfield.com/p/emerald-velvet-sofa', productId: 'sofa' },
+  { url: 'https://loomhouse.com/p/rust-boucle-armchair', productId: 'armchair' },
   { url: 'https://studionord.com/lighting/arc-floor-lamp-brass', productId: 'floorlamp' },
   { url: 'https://maisonverde.com/p/travertine-drum-side-table', productId: 'sidetable' },
-  { url: 'https://cmfurniture.com/paula-deen/hazel-chair', productId: 'hazel-chair' },
-  { url: 'https://cmfurniture.com/paula-deen/lowell-cocktail-ottoman', productId: 'lowell-ottoman-check' },
+  { url: 'https://oakline.com/p/round-oak-pedestal-table', productId: 'coffeetable' },
+  { url: 'https://loomhouse.com/p/oval-wool-rug-oat', productId: 'rug' },
   { url: 'https://studionord.com/decor/arched-brass-mirror', productId: 'mirror' },
 ];
