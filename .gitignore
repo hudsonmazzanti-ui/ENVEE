@@ -31,6 +31,7 @@ yarn-error.*
 *.pem
 
 # local env files
+.env
 .env*.local
 
 # typescript
@@ -45,3 +46,9 @@ example
 # web builds
 dist-inline/
 src/theme/assets.web.ts
+
+# local caches: downloaded product photos, raw Canopy responses (the product cache in data/ and the stickers in assets/stickers ARE committed)
+.cache/
+
+# python venv for the sticker maker
+.venv/

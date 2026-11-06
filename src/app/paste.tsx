@@ -9,7 +9,6 @@ import { BackButton, Button, TopBar, Txt } from '@/components/ui';
 import { productById, sampleLinks } from '@/data/catalog';
 import { useStore } from '@/state/store';
 import { C, F, R, S, money } from '@/theme';
-import { art } from '@/theme/assets';
 
 type Phase = 'idle' | 'reading' | 'ready';
 
@@ -89,7 +88,7 @@ export default function Paste() {
           <Animated.View style={[styles.result, { opacity: fade, transform: [{ translateY: fade.interpolate({ inputRange: [0, 1], outputRange: [12, 0] }) }] }]}>
             <View style={styles.cutout}>
               <View style={styles.checker} />
-              <Image source={art[product.sticker]} style={{ width: '78%', height: '78%' }} contentFit="contain" />
+              <Image source={product.sticker} style={{ width: '78%', height: '78%' }} contentFit="contain" />
               <View style={styles.cutTag}>
                 <Feather name="scissors" size={11} color={C.accent} />
                 <Txt v="small" style={{ fontSize: 11, color: C.accent, fontFamily: F.medium }}>Cut out</Txt>
@@ -117,7 +116,7 @@ export default function Paste() {
               return (
                 <Pressable key={l.url} onPress={() => read(l)} style={styles.sample}>
                   <View style={styles.sampleThumb}>
-                    <Image source={art[p.photo]} style={{ width: 36, height: 36 }} contentFit="contain" />
+                    <Image source={p.photo} style={{ width: 36, height: 36 }} contentFit="contain" />
                   </View>
                   <Txt v="body" style={{ fontSize: 14, flex: 1 }} numberOfLines={1}>{p.name}</Txt>
                   <Feather name="arrow-up-left" size={16} color={C.text3} />

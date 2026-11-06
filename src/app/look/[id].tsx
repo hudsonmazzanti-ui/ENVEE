@@ -10,7 +10,6 @@ import { BackButton, Button, Divider, HeartButton, TopBar, Txt } from '@/compone
 import { lookById, lookProducts } from '@/data/catalog';
 import { newSpaceId, useStore } from '@/state/store';
 import { C, R, S, money } from '@/theme';
-import { art } from '@/theme/assets';
 
 export default function LookScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -51,7 +50,7 @@ export default function LookScreen() {
         {items.map((p) => (
           <Pressable key={p.id} onPress={() => router.push(`/product/${p.id}`)} style={styles.row}>
             <View style={styles.thumb}>
-              <Image source={art[p.photo]} style={{ width: 54, height: 54 }} contentFit="contain" />
+              <Image source={p.photo} style={{ width: 54, height: 54 }} contentFit="contain" />
             </View>
             <View style={{ flex: 1 }}>
               <Txt v="body" style={{ fontSize: 14 }} numberOfLines={1}>{p.name}</Txt>

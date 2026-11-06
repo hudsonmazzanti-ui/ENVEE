@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useMemo, useReducer } from 'react';
 import type { ImageSource } from 'expo-image';
 
-import { productById } from '@/data/catalog';
+import { pick, productById } from '@/data/catalog';
 import { roomArt, type RoomKey } from '@/theme/rooms';
 
 // In-memory fake state so the mockup feels clickable. Nothing persists.
@@ -29,7 +29,7 @@ const uid = () => `u${n++}`;
 const st = (productId: string, x: number, y: number, size: number): Placed => ({ uid: uid(), productId, x, y, size });
 
 const initial: State = {
-  saved: ['sofa', 'armchair', 'mirror', 'floorlamp', 'rug', 'pendant'],
+  saved: [pick.sofa, pick.chair, 'mirror', pick.lamp, 'pendant'],
   spaces: [
     {
       id: 'bedroom',
@@ -130,9 +130,9 @@ export function useStore() {
 /** Starting size of a new sticker, as a fraction of the room photo's width. */
 export function defaultSize(productId: string) {
   const p = productById(productId);
-  if (productId === 'rug') return 0.6;
-  if (p.category === 'Sofas') return parseInt(p.dims, 10) >= 100 ? 0.82 : parseInt(p.dims, 10) <= 70 ? 0.46 : 0.62;
-  if (p.category === 'Chairs') return 0.36;
+  if (p.kind === 'sofa' || p.category === 'Sofas') return 0.62;
+  if (p.kind === 'chair' || p.category === 'Chairs') return 0.36;
+  if (p.kind === 'lamp') return 0.3;
   return 0.4;
 }
 

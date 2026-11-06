@@ -27,7 +27,7 @@ export function RoomThumb({ source, pieces, width, height, style }: Box & { sour
           const sz = s.size * cw;
           return (
             <View key={s.uid} style={{ position: 'absolute', width: sz, height: sz, left: s.x * cw - sz / 2, top: s.y * ch - sz / 2 }}>
-              <StickerImage source={art[productById(s.productId).sticker]} />
+              <StickerImage source={productById(s.productId).sticker} />
             </View>
           );
         })}

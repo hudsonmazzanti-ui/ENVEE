@@ -1,0 +1,32 @@
+{
+  "month": "2026-11",
+  "limit": 100,
+  "count": 5,
+  "log": [
+    {
+      "at": "2026-11-05T20:37:04.069Z",
+      "endpoint": "/api/amazon/bestsellers",
+      "note": "bestsellers sofas"
+    },
+    {
+      "at": "2026-11-05T20:37:10.440Z",
+      "endpoint": "/api/amazon/bestsellers",
+      "note": "bestsellers accent-chairs"
+    },
+    {
+      "at": "2026-11-05T20:37:15.964Z",
+      "endpoint": "/api/amazon/bestsellers",
+      "note": "bestsellers floor-lamps"
+    },
+    {
+      "at": "2026-11-05T20:37:19.511Z",
+      "endpoint": "/api/amazon/bestsellers",
+      "note": "bestsellers rugs"
+    },
+    {
+      "at": "2026-11-05T20:37:23.862Z",
+      "endpoint": "/api/amazon/bestsellers",
+      "note": "bestsellers coffee-tables"
+    }
+  ]
+}

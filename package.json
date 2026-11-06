@@ -44,7 +44,10 @@
     "build:hairline": "node scripts/build-hairline.mjs",
     "build:line-art": "node scripts/build-line-art.mjs",
     "build:items": "node scripts/build-items.mjs",
-    "preview:items": "node scripts/preview-items.mjs"
+    "preview:items": "node scripts/preview-items.mjs",
+    "catalog:fetch": "node scripts/canopy/fetch-catalog.mjs",
+    "catalog:usage": "node scripts/canopy/usage.mjs",
+    "stickers": "node scripts/stickers/run.mjs"
   },
   "private": true
 }

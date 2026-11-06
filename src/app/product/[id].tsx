@@ -12,7 +12,6 @@ import { BackButton, Button, Divider, HeartButton, IconName, TopBar, Txt } from 
 import { looks, productById } from '@/data/catalog';
 import { spaceSource, useStore } from '@/state/store';
 import { C, R, S, money } from '@/theme';
-import { art } from '@/theme/assets';
 
 export default function ProductScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -23,7 +22,7 @@ export default function ProductScreen() {
   const [color, setColor] = useState(0);
   const [placing, setPlacing] = useState(false);
   const seenIn = looks.filter((l) => l.productIds.includes(p.id));
-  // Affiliate products are bought on the retailer's site; this opens it (a new tab on web).
+  // Products with a shop link are bought on the retailer's site; this opens it (a new tab on web).
   const shop = () => {
     if (p.shopUrl) Linking.openURL(p.shopUrl);
   };
@@ -33,7 +32,7 @@ export default function ProductScreen() {
       <TopBar left={<BackButton />} right={<HeartButton id={p.id} />} />
       <ScrollView contentContainerStyle={{ paddingBottom: 130 + insets.bottom }} showsVerticalScrollIndicator={false}>
         <View style={[styles.hero, { height: W * 0.95 }]}>
-          <Image source={art[p.photo]} style={{ width: '78%', height: '78%' }} contentFit="contain" />
+          <Image source={p.photo} style={{ width: '78%', height: '78%' }} contentFit="contain" />
           <View style={styles.dots}>
             {[0, 1, 2, 3].map((i) => (
               <View key={i} style={[styles.dot, i === 0 && { backgroundColor: C.text, width: 16 }]} />
@@ -57,13 +56,16 @@ export default function ProductScreen() {
           </View>
 
           <Divider style={{ marginTop: S.xl }} />
-          <Row icon="maximize-2" label="Size" value={p.dims} />
-          <Divider />
+          {p.dims ? (
+            <>
+              <Row icon="maximize-2" label="Size" value={p.dims} />
+              <Divider />
+            </>
+          ) : null}
           <Pressable style={styles.extLink} onPress={p.shopUrl ? shop : undefined} disabled={!p.shopUrl}>
             <Txt v="small" style={{ color: C.text }}>View on {p.domain}</Txt>
             <Feather name="arrow-up-right" size={14} color={C.text} />
           </Pressable>
-          {p.shopUrl ? <Txt v="small" style={{ color: C.text3 }}>ENVEE may earn a commission when you buy through this link.</Txt> : null}
         </View>
 
         {seenIn.length ? (
