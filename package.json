@@ -42,7 +42,9 @@
     "typecheck": "tsc --noEmit",
     "lint": "expo lint",
     "build:hairline": "node scripts/build-hairline.mjs",
-    "build:line-art": "node scripts/build-line-art.mjs"
+    "build:line-art": "node scripts/build-line-art.mjs",
+    "build:items": "node scripts/build-items.mjs",
+    "preview:items": "node scripts/preview-items.mjs"
   },
   "private": true
 }
