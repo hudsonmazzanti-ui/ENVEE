@@ -47,7 +47,8 @@
     "preview:items": "node scripts/preview-items.mjs",
     "catalog:fetch": "node scripts/canopy/fetch-catalog.mjs",
     "catalog:usage": "node scripts/canopy/usage.mjs",
-    "stickers": "node scripts/stickers/run.mjs"
+    "stickers": "node scripts/stickers/run.mjs",
+    "sheet:items": "node scripts/sheet-items.mjs"
   },
   "private": true
 }

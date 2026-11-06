@@ -1,4 +1,4 @@
-// Renders ENVEE's furniture line art (hairline/items/items.js, drawn on the Hairline kernel) to one SVG per item in
+// Renders ENVEE's furniture line art (hairline/items/: kit.js, then pilot.js and amazon.js, drawn on the Hairline kernel) to one SVG per item in
 // assets/items, with colours and stroke baked into attributes and a transparent background, then writes the manifest:
 // assets/items/manifest.json (for tooling) and src/data/itemManifest.ts (for the app).
 //
@@ -16,7 +16,10 @@ const { chromium } = require('playwright');
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const out = path.join(root, 'assets/items');
 const kernel = fs.readFileSync(path.join(root, '.claude/skills/hairline-create/kernel.js'), 'utf8');
-const items = fs.readFileSync(path.join(root, 'hairline/items/items.js'), 'utf8');
+const sources = ['kit.js', 'pilot.js', 'amazon.js'].map((f) => fs.readFileSync(path.join(root, 'hairline/items', f), 'utf8'));
+// The Amazon cache: each product's title and main photo become the item's name and sourceImage.
+const cache = JSON.parse(fs.readFileSync(path.join(root, 'data/catalog/amazon-bestsellers.json'), 'utf8'));
+const cached = Object.fromEntries(Object.values(cache.categories).flatMap((c) => c.products ?? c).map((p) => [p.asin, p]));
 
 // The spec's numbers. Change them in docs/hairline-assets.md first.
 export const SPEC = {
@@ -83,7 +86,8 @@ function render(SPEC) {
     results.push({
       id: it.id,
       productId: it.productId,
-      name: it.name,
+      name: it.name ?? null,
+      dimsFrom: it.dimsFrom ?? 'spec',
       file: `assets/items/${it.id}.svg`,
       view: { w, h },
       dims: it.dims,
@@ -100,10 +104,14 @@ const browser = await chromium.launch();
 const page = await browser.newPage();
 await page.setContent('<!doctype html><html><body></body></html>');
 await page.addScriptTag({ content: kernel });
-await page.addScriptTag({ content: items });
-const results = await page.evaluate(render, SPEC);
+for (const content of sources) await page.addScriptTag({ content });
+const results = (await page.evaluate(render, SPEC)).map((r) => {
+  const c = cached[r.productId];
+  return c ? { ...r, name: r.name ?? c.name.split(' | ')[0], sourceImage: c.imageUrl, productUrl: c.productUrl } : r;
+});
 await browser.close();
 
+fs.rmSync(out, { recursive: true, force: true });
 fs.mkdirSync(out, { recursive: true });
 for (const r of results) fs.writeFileSync(path.join(root, r.file), r.svg);
 const manifest = results.map(({ svg, ...m }) => m);
@@ -118,9 +126,11 @@ export const ITEM_PX_PER_INCH = ${SPEC.pxPerInch};
 
 export type ItemAsset = {
   id: string;
-  /** The catalog product this drawing is of. */
-  productId: string;
-  name: string;
+  /** The catalog product this drawing is of (an ASIN for Amazon pieces); null for a style reference. */
+  productId: string | null;
+  name: string | null;
+  /** Where dims came from: the product title ('name'), a typical size for the kind ('estimate'), or the pilot spec. */
+  dimsFrom: 'name' | 'estimate' | 'spec';
   /** The SVG, transparent background, drawn front-left. Mirror it (scaleX -1 about anchor.x) for the other side. */
   svg: ImageSourcePropType;
   file: string;
@@ -134,19 +144,18 @@ export type ItemAsset = {
   footprint: { shape: 'rect' | 'ellipse'; w: number; d: number; outline: [number, number][] };
   /** The original product photo's URL, for "see real photo". null until the catalog has one. */
   sourceImage: string | null;
+  /** The product's page, when known. */
+  productUrl?: string;
 };
 
 const svgs: Record<string, ImageSourcePropType> = {
 ${results.map((r) => `  ${JSON.stringify(r.id)}: require('../../${r.file}'),`).join('\n')}
 };
 
-const data = ${JSON.stringify(manifest, null, 2)} as const;
+// JSON, so the outlines are plain arrays: typed as the manifest says.
+const data = ${JSON.stringify(manifest, null, 2)} as unknown as Omit<ItemAsset, 'svg'>[];
 
-export const itemAssets: ItemAsset[] = data.map((m) => ({
-  ...m,
-  svg: svgs[m.id],
-  footprint: { ...m.footprint, outline: m.footprint.outline.map(([x, y]) => [x, y] as [number, number]) },
-}));
+export const itemAssets: ItemAsset[] = data.map((m) => ({ ...m, svg: svgs[m.id] }));
 
 export const itemForProduct = (productId: string) => itemAssets.find((a) => a.productId === productId);
 `;

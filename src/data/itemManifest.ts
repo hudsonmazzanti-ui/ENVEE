@@ -7,9 +7,11 @@ export const ITEM_PX_PER_INCH = 2;
 
 export type ItemAsset = {
   id: string;
-  /** The catalog product this drawing is of. */
-  productId: string;
-  name: string;
+  /** The catalog product this drawing is of (an ASIN for Amazon pieces); null for a style reference. */
+  productId: string | null;
+  name: string | null;
+  /** Where dims came from: the product title ('name'), a typical size for the kind ('estimate'), or the pilot spec. */
+  dimsFrom: 'name' | 'estimate' | 'spec';
   /** The SVG, transparent background, drawn front-left. Mirror it (scaleX -1 about anchor.x) for the other side. */
   svg: ImageSourcePropType;
   file: string;
@@ -23,22 +25,56 @@ export type ItemAsset = {
   footprint: { shape: 'rect' | 'ellipse'; w: number; d: number; outline: [number, number][] };
   /** The original product photo's URL, for "see real photo". null until the catalog has one. */
   sourceImage: string | null;
+  /** The product's page, when known. */
+  productUrl?: string;
 };
 
 const svgs: Record<string, ImageSourcePropType> = {
-  "sofa": require('../../assets/items/sofa.svg'),
-  "floorlamp": require('../../assets/items/floorlamp.svg'),
-  "rug": require('../../assets/items/rug.svg'),
-  "chair": require('../../assets/items/chair.svg'),
-  "coffeetable": require('../../assets/items/coffeetable.svg'),
+  "pilot-sofa": require('../../assets/items/pilot-sofa.svg'),
+  "pilot-floorlamp": require('../../assets/items/pilot-floorlamp.svg'),
+  "pilot-rug": require('../../assets/items/pilot-rug.svg'),
+  "pilot-chair": require('../../assets/items/pilot-chair.svg'),
+  "pilot-coffeetable": require('../../assets/items/pilot-coffeetable.svg'),
+  "B0DDTCQGTR": require('../../assets/items/B0DDTCQGTR.svg'),
+  "B0FFZ78881": require('../../assets/items/B0FFZ78881.svg'),
+  "B0GM7QHVMP": require('../../assets/items/B0GM7QHVMP.svg'),
+  "B0GMWKDNBC": require('../../assets/items/B0GMWKDNBC.svg'),
+  "B0HKDCYMFF": require('../../assets/items/B0HKDCYMFF.svg'),
+  "B0GGPQJ3LQ": require('../../assets/items/B0GGPQJ3LQ.svg'),
+  "B0F1CPLNHT": require('../../assets/items/B0F1CPLNHT.svg'),
+  "B0BG8B89BP": require('../../assets/items/B0BG8B89BP.svg'),
+  "B0B1TCSXVM": require('../../assets/items/B0B1TCSXVM.svg'),
+  "B07MGZTLDB": require('../../assets/items/B07MGZTLDB.svg'),
+  "B07882V1YZ": require('../../assets/items/B07882V1YZ.svg'),
+  "B0F7LRGGRY": require('../../assets/items/B0F7LRGGRY.svg'),
+  "B0HNK19C4X": require('../../assets/items/B0HNK19C4X.svg'),
+  "B0FNCSGJVK": require('../../assets/items/B0FNCSGJVK.svg'),
+  "B0FJL9N76F": require('../../assets/items/B0FJL9N76F.svg'),
+  "B07Z5NQPDS": require('../../assets/items/B07Z5NQPDS.svg'),
+  "B07R9FZHLQ": require('../../assets/items/B07R9FZHLQ.svg'),
+  "B086ZLGLV3": require('../../assets/items/B086ZLGLV3.svg'),
+  "B08T1N86Q5": require('../../assets/items/B08T1N86Q5.svg'),
+  "B07R43W6L1": require('../../assets/items/B07R43W6L1.svg'),
+  "B0HHCXJBS4": require('../../assets/items/B0HHCXJBS4.svg'),
+  "B0GTTJGXFP": require('../../assets/items/B0GTTJGXFP.svg'),
+  "B0D3CF6B38": require('../../assets/items/B0D3CF6B38.svg'),
+  "B0F64KYP45": require('../../assets/items/B0F64KYP45.svg'),
+  "B003VOZE6M": require('../../assets/items/B003VOZE6M.svg'),
+  "B0DNDLLSM8": require('../../assets/items/B0DNDLLSM8.svg'),
+  "B0DZX77VQ9": require('../../assets/items/B0DZX77VQ9.svg'),
+  "B0D31M71SB": require('../../assets/items/B0D31M71SB.svg'),
+  "B0F3J6PW1C": require('../../assets/items/B0F3J6PW1C.svg'),
+  "B0DRHQ2KLG": require('../../assets/items/B0DRHQ2KLG.svg'),
 };
 
+// JSON, so the outlines are plain arrays: typed as the manifest says.
 const data = [
   {
-    "id": "sofa",
-    "productId": "sofa",
+    "id": "pilot-sofa",
+    "productId": null,
     "name": "Emerald Velvet Sofa",
-    "file": "assets/items/sofa.svg",
+    "dimsFrom": "spec",
+    "file": "assets/items/pilot-sofa.svg",
     "view": {
       "w": 162,
       "h": 133
@@ -78,10 +114,11 @@ const data = [
     "sourceImage": null
   },
   {
-    "id": "floorlamp",
-    "productId": "floorlamp",
+    "id": "pilot-floorlamp",
+    "productId": null,
     "name": "Arc Floor Lamp, Brass",
-    "file": "assets/items/floorlamp.svg",
+    "dimsFrom": "spec",
+    "file": "assets/items/pilot-floorlamp.svg",
     "view": {
       "w": 105,
       "h": 126
@@ -121,10 +158,11 @@ const data = [
     "sourceImage": null
   },
   {
-    "id": "rug",
-    "productId": "rug",
+    "id": "pilot-rug",
+    "productId": null,
     "name": "Oval Wool Rug, Oat",
-    "file": "assets/items/rug.svg",
+    "dimsFrom": "spec",
+    "file": "assets/items/pilot-rug.svg",
     "view": {
       "w": 188,
       "h": 97
@@ -244,10 +282,11 @@ const data = [
     "sourceImage": null
   },
   {
-    "id": "chair",
+    "id": "pilot-chair",
     "productId": "chair",
     "name": "Oak Spindle Chair",
-    "file": "assets/items/chair.svg",
+    "dimsFrom": "spec",
+    "file": "assets/items/pilot-chair.svg",
     "view": {
       "w": 55,
       "h": 86
@@ -287,10 +326,11 @@ const data = [
     "sourceImage": null
   },
   {
-    "id": "coffeetable",
-    "productId": "coffeetable",
+    "id": "pilot-coffeetable",
+    "productId": null,
     "name": "Round Oak Pedestal Table",
-    "file": "assets/items/coffeetable.svg",
+    "dimsFrom": "spec",
+    "file": "assets/items/pilot-coffeetable.svg",
     "view": {
       "w": 76,
       "h": 59
@@ -408,13 +448,1919 @@ const data = [
       ]
     },
     "sourceImage": null
+  },
+  {
+    "id": "B0DDTCQGTR",
+    "productId": "B0DDTCQGTR",
+    "name": "MAXYOYO Folding Sofa Bed, Convertible Chair Bed with Pillow",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0DDTCQGTR.svg",
+    "view": {
+      "w": 86,
+      "h": 91
+    },
+    "dims": {
+      "w": 30,
+      "d": 32,
+      "h": 28
+    },
+    "anchor": {
+      "x": 41.7,
+      "y": 69.07
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 30,
+      "d": 32,
+      "outline": [
+        [
+          43.11,
+          47.15
+        ],
+        [
+          85.54,
+          68.36
+        ],
+        [
+          40.28,
+          90.99
+        ],
+        [
+          -2.14,
+          69.78
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/81AXuV9VZmL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0DDTCQGTR"
+  },
+  {
+    "id": "B0FFZ78881",
+    "productId": "B0FFZ78881",
+    "name": "Boneless Couch, Cloud Couch Sofa, Sectional Couches for Living Room",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0FFZ78881.svg",
+    "view": {
+      "w": 223,
+      "h": 140
+    },
+    "dims": {
+      "w": 100,
+      "d": 62,
+      "h": 28
+    },
+    "anchor": {
+      "x": 112.82,
+      "y": 100.46
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 100,
+      "d": 62,
+      "outline": [
+        [
+          85.95,
+          43.18
+        ],
+        [
+          227.37,
+          113.89
+        ],
+        [
+          139.69,
+          157.73
+        ],
+        [
+          -1.73,
+          87.02
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/81WRi+09HqL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0FFZ78881"
+  },
+  {
+    "id": "B0GM7QHVMP",
+    "productId": "B0GM7QHVMP",
+    "name": "MEGAYES Folding Sofa Bed Convertible 4 in 1 Sleeper Chair Gray Single",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0GM7QHVMP.svg",
+    "view": {
+      "w": 82,
+      "h": 99
+    },
+    "dims": {
+      "w": 30,
+      "d": 30,
+      "h": 32
+    },
+    "anchor": {
+      "x": 40.28,
+      "y": 76.98
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 30,
+      "d": 30,
+      "outline": [
+        [
+          40.28,
+          55.77
+        ],
+        [
+          82.71,
+          76.98
+        ],
+        [
+          40.28,
+          98.2
+        ],
+        [
+          -2.15,
+          76.98
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/613dHHAr9eL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0GM7QHVMP"
+  },
+  {
+    "id": "B0GMWKDNBC",
+    "productId": "B0GMWKDNBC",
+    "name": "GRUSIGN Cloud Sectional Boneless Couches for Living Room, Modular L Shaped Couch with Deep Seat Oversized Right Facing Chaise",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0GMWKDNBC.svg",
+    "view": {
+      "w": 206,
+      "h": 172
+    },
+    "dims": {
+      "w": 112,
+      "d": 66,
+      "h": 30
+    },
+    "anchor": {
+      "x": 84.13,
+      "y": 108.87
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 112,
+      "d": 66,
+      "outline": [
+        [
+          51.6,
+          45.94
+        ],
+        [
+          209.99,
+          125.14
+        ],
+        [
+          116.65,
+          171.81
+        ],
+        [
+          -41.74,
+          92.61
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/81OIb14t8mL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0GMWKDNBC"
+  },
+  {
+    "id": "B0HKDCYMFF",
+    "productId": "B0HKDCYMFF",
+    "name": "Boneless Couch, 96\" Modular L-Shaped Cloud Sectional Sofa, Black",
+    "dimsFrom": "name",
+    "file": "assets/items/B0HKDCYMFF.svg",
+    "view": {
+      "w": 181,
+      "h": 154
+    },
+    "dims": {
+      "w": 96,
+      "d": 60,
+      "h": 28
+    },
+    "anchor": {
+      "x": 74.64,
+      "y": 98.33
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 96,
+      "d": 60,
+      "outline": [
+        [
+          49.18,
+          43.18
+        ],
+        [
+          184.94,
+          111.06
+        ],
+        [
+          100.09,
+          153.49
+        ],
+        [
+          -35.67,
+          85.61
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/71XGJe5dfzL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0HKDCYMFF"
+  },
+  {
+    "id": "B0GGPQJ3LQ",
+    "productId": "B0GGPQJ3LQ",
+    "name": "Korser 110\" Cloud Sectional Couches for Living Room, Modern Modular Sectional Sofa with Ottoman, Boneless Cloud Couch with Co",
+    "dimsFrom": "name",
+    "file": "assets/items/B0GGPQJ3LQ.svg",
+    "view": {
+      "w": 205,
+      "h": 171
+    },
+    "dims": {
+      "w": 110,
+      "d": 66,
+      "h": 29
+    },
+    "anchor": {
+      "x": 81.71,
+      "y": 107.15
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 110,
+      "d": 66,
+      "outline": [
+        [
+          50.6,
+          44.92
+        ],
+        [
+          206.16,
+          122.7
+        ],
+        [
+          112.83,
+          169.37
+        ],
+        [
+          -42.74,
+          91.59
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/71kP8ZeDl9L._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0GGPQJ3LQ"
+  },
+  {
+    "id": "B0F1CPLNHT",
+    "productId": "B0F1CPLNHT",
+    "name": "BestEra Vanity Chair with Wheels, Comfy Home Office Desk Chairs Adjustable Modern Velvet Makeup Vanity Chairs for Bedroom Liv",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0F1CPLNHT.svg",
+    "view": {
+      "w": 58,
+      "h": 89
+    },
+    "dims": {
+      "w": 23,
+      "d": 22,
+      "h": 34
+    },
+    "anchor": {
+      "x": 26.76,
+      "y": 75.06
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 23,
+      "d": 22,
+      "outline": [
+        [
+          26.05,
+          59.15
+        ],
+        [
+          58.58,
+          75.41
+        ],
+        [
+          27.46,
+          90.97
+        ],
+        [
+          -5.06,
+          74.71
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/619yF7utlgL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0F1CPLNHT"
+  },
+  {
+    "id": "B0BG8B89BP",
+    "productId": "B0BG8B89BP",
+    "name": "Tiita Lazy Chair with Ottoman, Comfy Reading Accent Chair, Dark Grey",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0BG8B89BP.svg",
+    "view": {
+      "w": 100,
+      "h": 104
+    },
+    "dims": {
+      "w": 30,
+      "d": 50,
+      "h": 36
+    },
+    "anchor": {
+      "x": 49.01,
+      "y": 78.56
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 30,
+      "d": 50,
+      "outline": [
+        [
+          63.15,
+          50.28
+        ],
+        [
+          105.58,
+          71.49
+        ],
+        [
+          34.87,
+          106.85
+        ],
+        [
+          -7.56,
+          85.64
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/61lZUO7uEPL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0BG8B89BP"
+  },
+  {
+    "id": "B0B1TCSXVM",
+    "productId": "B0B1TCSXVM",
+    "name": "Storkcraft Premium Hoop Glider & Ottoman, Natural/Beige",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0B1TCSXVM.svg",
+    "view": {
+      "w": 97,
+      "h": 118
+    },
+    "dims": {
+      "w": 26,
+      "d": 49,
+      "h": 40
+    },
+    "anchor": {
+      "x": 49.14,
+      "y": 93.73
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 26,
+      "d": 49,
+      "outline": [
+        [
+          65.4,
+          67.21
+        ],
+        [
+          102.17,
+          85.59
+        ],
+        [
+          32.87,
+          120.24
+        ],
+        [
+          -3.9,
+          101.86
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/71Sx8jN8pPL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0B1TCSXVM"
+  },
+  {
+    "id": "B07MGZTLDB",
+    "productId": "B07MGZTLDB",
+    "name": "MCombo Power Lift Recliner Chair for Elderly, Fabric 7287 (Brown, Medium)",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B07MGZTLDB.svg",
+    "view": {
+      "w": 91,
+      "h": 116
+    },
+    "dims": {
+      "w": 33,
+      "d": 36,
+      "h": 41
+    },
+    "anchor": {
+      "x": 46.48,
+      "y": 91.31
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 33,
+      "d": 36,
+      "outline": [
+        [
+          48.6,
+          66.91
+        ],
+        [
+          95.27,
+          90.24
+        ],
+        [
+          44.36,
+          115.7
+        ],
+        [
+          -2.31,
+          92.37
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/91ogtUuMhsL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B07MGZTLDB"
+  },
+  {
+    "id": "B07882V1YZ",
+    "productId": "B07882V1YZ",
+    "name": "MCombo Power Lift Recliner Chair for Elderly 7040(Medium, Light Brown)",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B07882V1YZ.svg",
+    "view": {
+      "w": 95,
+      "h": 118
+    },
+    "dims": {
+      "w": 34,
+      "d": 38,
+      "h": 41
+    },
+    "anchor": {
+      "x": 48.6,
+      "y": 92.37
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 34,
+      "d": 38,
+      "outline": [
+        [
+          51.43,
+          66.91
+        ],
+        [
+          99.51,
+          90.95
+        ],
+        [
+          45.77,
+          117.82
+        ],
+        [
+          -2.31,
+          93.78
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/71whgU9Yu9L._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B07882V1YZ"
+  },
+  {
+    "id": "B0F7LRGGRY",
+    "productId": "B0F7LRGGRY",
+    "name": "MAXYOYO Modern Accent Chair, Comfy Living Room Chair with Metal Frame",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0F7LRGGRY.svg",
+    "view": {
+      "w": 80,
+      "h": 90
+    },
+    "dims": {
+      "w": 26,
+      "d": 31,
+      "h": 30
+    },
+    "anchor": {
+      "x": 41.05,
+      "y": 70.93
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 26,
+      "d": 31,
+      "outline": [
+        [
+          44.59,
+          50.78
+        ],
+        [
+          81.36,
+          69.16
+        ],
+        [
+          37.52,
+          91.09
+        ],
+        [
+          0.75,
+          72.7
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/81wlhgDY-TL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0F7LRGGRY"
+  },
+  {
+    "id": "B0HNK19C4X",
+    "productId": "B0HNK19C4X",
+    "name": "Rocker Recliner Chair with Massage and Heat, Comfy Relining Chair with Cup Holders, USB Charge Port, Side Pockets, Nursery Ro",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0HNK19C4X.svg",
+    "view": {
+      "w": 92,
+      "h": 111
+    },
+    "dims": {
+      "w": 34,
+      "d": 36,
+      "h": 40
+    },
+    "anchor": {
+      "x": 47.19,
+      "y": 89.93
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 34,
+      "d": 36,
+      "outline": [
+        [
+          48.6,
+          65.18
+        ],
+        [
+          96.68,
+          89.22
+        ],
+        [
+          45.77,
+          114.68
+        ],
+        [
+          -2.31,
+          90.64
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/A1DvZuVOt1L._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0HNK19C4X"
+  },
+  {
+    "id": "B0FNCSGJVK",
+    "productId": "B0FNCSGJVK",
+    "name": "MAXYOYO Accent Chair with Ottoman, Lounge Chair with Adjustable Backrest",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0FNCSGJVK.svg",
+    "view": {
+      "w": 113,
+      "h": 103
+    },
+    "dims": {
+      "w": 24,
+      "d": 52,
+      "h": 30
+    },
+    "anchor": {
+      "x": 48.18,
+      "y": 78.25
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 24,
+      "d": 52,
+      "outline": [
+        [
+          67.98,
+          51.38
+        ],
+        [
+          101.92,
+          68.35
+        ],
+        [
+          28.38,
+          105.12
+        ],
+        [
+          -5.56,
+          88.15
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/71OhT7wqbbL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0FNCSGJVK"
+  },
+  {
+    "id": "B0FJL9N76F",
+    "productId": "B0FJL9N76F",
+    "name": "Korser Small Swivel Rocker Recliner Chair, Manual Recliner, Beige",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0FJL9N76F.svg",
+    "view": {
+      "w": 83,
+      "h": 105
+    },
+    "dims": {
+      "w": 30,
+      "d": 33,
+      "h": 39
+    },
+    "anchor": {
+      "x": 42.65,
+      "y": 86.42
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 30,
+      "d": 33,
+      "outline": [
+        [
+          44.77,
+          64.15
+        ],
+        [
+          87.2,
+          85.36
+        ],
+        [
+          40.53,
+          108.7
+        ],
+        [
+          -1.9,
+          87.48
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/81+bBmMoXSL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0FJL9N76F"
+  },
+  {
+    "id": "B07Z5NQPDS",
+    "productId": "B07Z5NQPDS",
+    "name": "Modern Floor Lamp Simple Design with White Shade & Foot Pedal Switch",
+    "dimsFrom": "name",
+    "file": "assets/items/B07Z5NQPDS.svg",
+    "view": {
+      "w": 26,
+      "h": 119
+    },
+    "dims": {
+      "w": 12,
+      "d": 12,
+      "h": 60
+    },
+    "anchor": {
+      "x": 13,
+      "y": 111.43
+    },
+    "footprint": {
+      "shape": "ellipse",
+      "w": 10,
+      "d": 10,
+      "outline": [
+        [
+          20.07,
+          114.96
+        ],
+        [
+          18,
+          115.76
+        ],
+        [
+          15.59,
+          116.25
+        ],
+        [
+          13,
+          116.43
+        ],
+        [
+          10.41,
+          116.25
+        ],
+        [
+          8,
+          115.76
+        ],
+        [
+          5.93,
+          114.96
+        ],
+        [
+          4.34,
+          113.93
+        ],
+        [
+          3.34,
+          112.72
+        ],
+        [
+          3,
+          111.43
+        ],
+        [
+          3.34,
+          110.13
+        ],
+        [
+          4.34,
+          108.93
+        ],
+        [
+          5.93,
+          107.89
+        ],
+        [
+          8,
+          107.1
+        ],
+        [
+          10.41,
+          106.6
+        ],
+        [
+          13,
+          106.43
+        ],
+        [
+          15.59,
+          106.6
+        ],
+        [
+          18,
+          107.1
+        ],
+        [
+          20.07,
+          107.89
+        ],
+        [
+          21.66,
+          108.93
+        ],
+        [
+          22.66,
+          110.13
+        ],
+        [
+          23,
+          111.43
+        ],
+        [
+          22.66,
+          112.72
+        ],
+        [
+          21.66,
+          113.93
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/41SBc9K-1QL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B07Z5NQPDS"
+  },
+  {
+    "id": "B07R9FZHLQ",
+    "productId": "B07R9FZHLQ",
+    "name": "Globe Electric 67135 72\" Floor Lamp with Adjustable Reading Light, Bright, Easy-to-Assemble Torchiere for Bedroom, Living Roo",
+    "dimsFrom": "name",
+    "file": "assets/items/B07R9FZHLQ.svg",
+    "view": {
+      "w": 34,
+      "h": 141
+    },
+    "dims": {
+      "w": 20,
+      "d": 15,
+      "h": 72
+    },
+    "anchor": {
+      "x": 14,
+      "y": 132.71
+    },
+    "footprint": {
+      "shape": "ellipse",
+      "w": 11,
+      "d": 11,
+      "outline": [
+        [
+          21.78,
+          136.6
+        ],
+        [
+          19.5,
+          137.47
+        ],
+        [
+          16.85,
+          138.02
+        ],
+        [
+          14,
+          138.21
+        ],
+        [
+          11.15,
+          138.02
+        ],
+        [
+          8.5,
+          137.47
+        ],
+        [
+          6.22,
+          136.6
+        ],
+        [
+          4.47,
+          135.46
+        ],
+        [
+          3.37,
+          134.13
+        ],
+        [
+          3,
+          132.71
+        ],
+        [
+          3.37,
+          131.28
+        ],
+        [
+          4.47,
+          129.96
+        ],
+        [
+          6.22,
+          128.82
+        ],
+        [
+          8.5,
+          127.94
+        ],
+        [
+          11.15,
+          127.39
+        ],
+        [
+          14,
+          127.21
+        ],
+        [
+          16.85,
+          127.39
+        ],
+        [
+          19.5,
+          127.94
+        ],
+        [
+          21.78,
+          128.82
+        ],
+        [
+          23.53,
+          129.96
+        ],
+        [
+          24.63,
+          131.28
+        ],
+        [
+          25,
+          132.71
+        ],
+        [
+          24.63,
+          134.13
+        ],
+        [
+          23.53,
+          135.46
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/412bcfAAj4L._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B07R9FZHLQ"
+  },
+  {
+    "id": "B086ZLGLV3",
+    "productId": "B086ZLGLV3",
+    "name": "ROTTOGOON Floor Lamp for Living Room with 3 Color Temperatures LED Bulb, Standing Lamp Tall Industrial Floor Lamp Reading for",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B086ZLGLV3.svg",
+    "view": {
+      "w": 48,
+      "h": 117
+    },
+    "dims": {
+      "w": 27,
+      "d": 13,
+      "h": 64
+    },
+    "anchor": {
+      "x": 13,
+      "y": 108.87
+    },
+    "footprint": {
+      "shape": "ellipse",
+      "w": 11,
+      "d": 11,
+      "outline": [
+        [
+          20.78,
+          112.76
+        ],
+        [
+          18.5,
+          113.64
+        ],
+        [
+          15.85,
+          114.18
+        ],
+        [
+          13,
+          114.37
+        ],
+        [
+          10.15,
+          114.18
+        ],
+        [
+          7.5,
+          113.64
+        ],
+        [
+          5.22,
+          112.76
+        ],
+        [
+          3.47,
+          111.62
+        ],
+        [
+          2.37,
+          110.3
+        ],
+        [
+          2,
+          108.87
+        ],
+        [
+          2.37,
+          107.45
+        ],
+        [
+          3.47,
+          106.12
+        ],
+        [
+          5.22,
+          104.98
+        ],
+        [
+          7.5,
+          104.11
+        ],
+        [
+          10.15,
+          103.56
+        ],
+        [
+          13,
+          103.37
+        ],
+        [
+          15.85,
+          103.56
+        ],
+        [
+          18.5,
+          104.11
+        ],
+        [
+          20.78,
+          104.98
+        ],
+        [
+          22.53,
+          106.12
+        ],
+        [
+          23.63,
+          107.45
+        ],
+        [
+          24,
+          108.87
+        ],
+        [
+          23.63,
+          110.3
+        ],
+        [
+          22.53,
+          111.62
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/61pJwYkeP9L._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B086ZLGLV3"
+  },
+  {
+    "id": "B08T1N86Q5",
+    "productId": "B08T1N86Q5",
+    "name": "PESRAE Floor Lamp, Remote Control, Stepless Brightness & Color Temperature",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B08T1N86Q5.svg",
+    "view": {
+      "w": 36,
+      "h": 137
+    },
+    "dims": {
+      "w": 16,
+      "d": 16,
+      "h": 69
+    },
+    "anchor": {
+      "x": 18,
+      "y": 129.51
+    },
+    "footprint": {
+      "shape": "ellipse",
+      "w": 10,
+      "d": 10,
+      "outline": [
+        [
+          25.07,
+          133.05
+        ],
+        [
+          23,
+          133.84
+        ],
+        [
+          20.59,
+          134.34
+        ],
+        [
+          18,
+          134.51
+        ],
+        [
+          15.41,
+          134.34
+        ],
+        [
+          13,
+          133.84
+        ],
+        [
+          10.93,
+          133.05
+        ],
+        [
+          9.34,
+          132.01
+        ],
+        [
+          8.34,
+          130.81
+        ],
+        [
+          8,
+          129.51
+        ],
+        [
+          8.34,
+          128.22
+        ],
+        [
+          9.34,
+          127.01
+        ],
+        [
+          10.93,
+          125.98
+        ],
+        [
+          13,
+          125.18
+        ],
+        [
+          15.41,
+          124.68
+        ],
+        [
+          18,
+          124.51
+        ],
+        [
+          20.59,
+          124.68
+        ],
+        [
+          23,
+          125.18
+        ],
+        [
+          25.07,
+          125.98
+        ],
+        [
+          26.66,
+          127.01
+        ],
+        [
+          27.66,
+          128.22
+        ],
+        [
+          28,
+          129.51
+        ],
+        [
+          27.66,
+          130.81
+        ],
+        [
+          26.66,
+          132.01
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/51+IKShrEWL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B08T1N86Q5"
+  },
+  {
+    "id": "B07R43W6L1",
+    "productId": "B07R43W6L1",
+    "name": "Globe Electric 67134 72\" Torchiere Floor Lamp and Adjustable Reading Light, Silver, Frosted Shade, Dual Rotary Switch, 3-Step",
+    "dimsFrom": "name",
+    "file": "assets/items/B07R43W6L1.svg",
+    "view": {
+      "w": 34,
+      "h": 141
+    },
+    "dims": {
+      "w": 20,
+      "d": 15,
+      "h": 72
+    },
+    "anchor": {
+      "x": 14,
+      "y": 132.71
+    },
+    "footprint": {
+      "shape": "ellipse",
+      "w": 11,
+      "d": 11,
+      "outline": [
+        [
+          21.78,
+          136.6
+        ],
+        [
+          19.5,
+          137.47
+        ],
+        [
+          16.85,
+          138.02
+        ],
+        [
+          14,
+          138.21
+        ],
+        [
+          11.15,
+          138.02
+        ],
+        [
+          8.5,
+          137.47
+        ],
+        [
+          6.22,
+          136.6
+        ],
+        [
+          4.47,
+          135.46
+        ],
+        [
+          3.37,
+          134.13
+        ],
+        [
+          3,
+          132.71
+        ],
+        [
+          3.37,
+          131.28
+        ],
+        [
+          4.47,
+          129.96
+        ],
+        [
+          6.22,
+          128.82
+        ],
+        [
+          8.5,
+          127.94
+        ],
+        [
+          11.15,
+          127.39
+        ],
+        [
+          14,
+          127.21
+        ],
+        [
+          16.85,
+          127.39
+        ],
+        [
+          19.5,
+          127.94
+        ],
+        [
+          21.78,
+          128.82
+        ],
+        [
+          23.53,
+          129.96
+        ],
+        [
+          24.63,
+          131.28
+        ],
+        [
+          25,
+          132.71
+        ],
+        [
+          24.63,
+          134.13
+        ],
+        [
+          23.53,
+          135.46
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/41zcMTdfFML._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B07R43W6L1"
+  },
+  {
+    "id": "B0HHCXJBS4",
+    "productId": "B0HHCXJBS4",
+    "name": "DUMOS Coffee Tables with Storage, Lifting Top for Living Room",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0HHCXJBS4.svg",
+    "view": {
+      "w": 86,
+      "h": 77
+    },
+    "dims": {
+      "w": 39,
+      "d": 20,
+      "h": 19
+    },
+    "anchor": {
+      "x": 42.56,
+      "y": 55.19
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 39,
+      "d": 20,
+      "outline": [
+        [
+          29.12,
+          34.33
+        ],
+        [
+          84.27,
+          61.91
+        ],
+        [
+          55.99,
+          76.05
+        ],
+        [
+          0.84,
+          48.47
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/813UL2oMMsL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0HHCXJBS4"
+  },
+  {
+    "id": "B0GTTJGXFP",
+    "productId": "B0GTTJGXFP",
+    "name": "VASAGLE Lift Top Coffee Table with Hidden Storage, Gas Spring",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0GTTJGXFP.svg",
+    "view": {
+      "w": 86,
+      "h": 77
+    },
+    "dims": {
+      "w": 39,
+      "d": 20,
+      "h": 19
+    },
+    "anchor": {
+      "x": 42.56,
+      "y": 55.19
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 39,
+      "d": 20,
+      "outline": [
+        [
+          29.12,
+          34.33
+        ],
+        [
+          84.27,
+          61.91
+        ],
+        [
+          55.99,
+          76.05
+        ],
+        [
+          0.84,
+          48.47
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/71vmbQY96+L._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0GTTJGXFP"
+  },
+  {
+    "id": "B0D3CF6B38",
+    "productId": "B0D3CF6B38",
+    "name": "SEDETA 31.5\" Lift Top Coffee Table with Storage, Square Coffee Tables for Living Room, Farmhouse Coffee Table with Large Hidd",
+    "dimsFrom": "name",
+    "file": "assets/items/B0D3CF6B38.svg",
+    "view": {
+      "w": 91,
+      "h": 78
+    },
+    "dims": {
+      "w": 31.5,
+      "d": 31.5,
+      "h": 18
+    },
+    "anchor": {
+      "x": 45.39,
+      "y": 54.87
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 31.5,
+      "d": 31.5,
+      "outline": [
+        [
+          45.39,
+          32.6
+        ],
+        [
+          89.94,
+          54.87
+        ],
+        [
+          45.39,
+          77.15
+        ],
+        [
+          0.84,
+          54.87
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/81YkKxcc-AL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0D3CF6B38"
+  },
+  {
+    "id": "B0F64KYP45",
+    "productId": "B0F64KYP45",
+    "name": "JOINICE 31.5\" Round Coffee Table with Storage for Living Room, Walnut",
+    "dimsFrom": "name",
+    "file": "assets/items/B0F64KYP45.svg",
+    "view": {
+      "w": 67,
+      "h": 64
+    },
+    "dims": {
+      "w": 31.5,
+      "d": 31.5,
+      "h": 18
+    },
+    "anchor": {
+      "x": 33.5,
+      "y": 48.92
+    },
+    "footprint": {
+      "shape": "ellipse",
+      "w": 31.5,
+      "d": 31.5,
+      "outline": [
+        [
+          55.77,
+          60.06
+        ],
+        [
+          49.25,
+          62.56
+        ],
+        [
+          41.65,
+          64.14
+        ],
+        [
+          33.5,
+          64.67
+        ],
+        [
+          25.35,
+          64.14
+        ],
+        [
+          17.75,
+          62.56
+        ],
+        [
+          11.23,
+          60.06
+        ],
+        [
+          6.22,
+          56.8
+        ],
+        [
+          3.07,
+          53
+        ],
+        [
+          2,
+          48.92
+        ],
+        [
+          3.07,
+          44.85
+        ],
+        [
+          6.22,
+          41.05
+        ],
+        [
+          11.23,
+          37.79
+        ],
+        [
+          17.75,
+          35.28
+        ],
+        [
+          25.35,
+          33.71
+        ],
+        [
+          33.5,
+          33.17
+        ],
+        [
+          41.65,
+          33.71
+        ],
+        [
+          49.25,
+          35.28
+        ],
+        [
+          55.77,
+          37.79
+        ],
+        [
+          60.78,
+          41.05
+        ],
+        [
+          63.93,
+          44.85
+        ],
+        [
+          65,
+          48.92
+        ],
+        [
+          63.93,
+          53
+        ],
+        [
+          60.78,
+          56.8
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/81lWj9W1uyL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0F64KYP45"
+  },
+  {
+    "id": "B003VOZE6M",
+    "productId": "B003VOZE6M",
+    "name": "Furinno Simple Design Coffee Table, Espresso",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B003VOZE6M.svg",
+    "view": {
+      "w": 73,
+      "h": 63
+    },
+    "dims": {
+      "w": 35.5,
+      "d": 17.7,
+      "h": 15.6
+    },
+    "anchor": {
+      "x": 36.31,
+      "y": 46.17
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 35.5,
+      "d": 17.7,
+      "outline": [
+        [
+          23.72,
+          27.36
+        ],
+        [
+          73.92,
+          52.46
+        ],
+        [
+          48.89,
+          64.98
+        ],
+        [
+          -1.31,
+          39.88
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/51FwiT03ZOL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B003VOZE6M"
+  },
+  {
+    "id": "B0DNDLLSM8",
+    "productId": "B0DNDLLSM8",
+    "name": "WLIVE Lift Top Coffee Table with Hidden Storage, Brown",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0DNDLLSM8.svg",
+    "view": {
+      "w": 86,
+      "h": 77
+    },
+    "dims": {
+      "w": 39,
+      "d": 20,
+      "h": 19
+    },
+    "anchor": {
+      "x": 42.56,
+      "y": 55.19
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 39,
+      "d": 20,
+      "outline": [
+        [
+          29.12,
+          34.33
+        ],
+        [
+          84.27,
+          61.91
+        ],
+        [
+          55.99,
+          76.05
+        ],
+        [
+          0.84,
+          48.47
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/818vCvDk7rL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0DNDLLSM8"
+  },
+  {
+    "id": "B0DZX77VQ9",
+    "productId": "B0DZX77VQ9",
+    "name": "Modern Glass Coffee Table, Mid Century Small Coffee Table, Coffee Table for Living Room,Suitable for Bedroom Living Room Rece",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0DZX77VQ9.svg",
+    "view": {
+      "w": 65,
+      "h": 61
+    },
+    "dims": {
+      "w": 40,
+      "d": 26,
+      "h": 16
+    },
+    "anchor": {
+      "x": 36.65,
+      "y": 47.66
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 40,
+      "d": 26,
+      "outline": [
+        [
+          26.75,
+          24.33
+        ],
+        [
+          83.32,
+          52.61
+        ],
+        [
+          46.55,
+          71
+        ],
+        [
+          -10.02,
+          42.71
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/818jZm2MnhL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0DZX77VQ9"
+  },
+  {
+    "id": "B0D31M71SB",
+    "productId": "B0D31M71SB",
+    "name": "VASAGLE Round Coffee Table, 2-Tier Center Table with Storage, Tapered Legs",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0D31M71SB.svg",
+    "view": {
+      "w": 67,
+      "h": 65
+    },
+    "dims": {
+      "w": 31.5,
+      "d": 31.5,
+      "h": 17.7
+    },
+    "anchor": {
+      "x": 33.5,
+      "y": 48.4
+    },
+    "footprint": {
+      "shape": "ellipse",
+      "w": 31.5,
+      "d": 31.5,
+      "outline": [
+        [
+          55.77,
+          59.54
+        ],
+        [
+          49.25,
+          62.04
+        ],
+        [
+          41.65,
+          63.62
+        ],
+        [
+          33.5,
+          64.15
+        ],
+        [
+          25.35,
+          63.62
+        ],
+        [
+          17.75,
+          62.04
+        ],
+        [
+          11.23,
+          59.54
+        ],
+        [
+          6.22,
+          56.28
+        ],
+        [
+          3.07,
+          52.48
+        ],
+        [
+          2,
+          48.4
+        ],
+        [
+          3.07,
+          44.33
+        ],
+        [
+          6.22,
+          40.53
+        ],
+        [
+          11.23,
+          37.27
+        ],
+        [
+          17.75,
+          34.76
+        ],
+        [
+          25.35,
+          33.19
+        ],
+        [
+          33.5,
+          32.65
+        ],
+        [
+          41.65,
+          33.19
+        ],
+        [
+          49.25,
+          34.76
+        ],
+        [
+          55.77,
+          37.27
+        ],
+        [
+          60.78,
+          40.53
+        ],
+        [
+          63.93,
+          44.33
+        ],
+        [
+          65,
+          48.4
+        ],
+        [
+          63.93,
+          52.48
+        ],
+        [
+          60.78,
+          56.28
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/81wTgP-TgyL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0D31M71SB"
+  },
+  {
+    "id": "B0F3J6PW1C",
+    "productId": "B0F3J6PW1C",
+    "name": "HOOBRO Coffee Table for Living Room, Oval Small Coffee Table with 2-Tier Open Storage Shelf, Industrial Cocktail Tea Table, W",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0F3J6PW1C.svg",
+    "view": {
+      "w": 72,
+      "h": 67
+    },
+    "dims": {
+      "w": 39.4,
+      "d": 19.7,
+      "h": 17.7
+    },
+    "anchor": {
+      "x": 35.63,
+      "y": 49.48
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 39.4,
+      "d": 19.7,
+      "outline": [
+        [
+          21.7,
+          28.58
+        ],
+        [
+          77.42,
+          56.44
+        ],
+        [
+          49.56,
+          70.37
+        ],
+        [
+          -6.16,
+          42.51
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/81uVqi4PYiL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0F3J6PW1C"
+  },
+  {
+    "id": "B0DRHQ2KLG",
+    "productId": "B0DRHQ2KLG",
+    "name": "VASAGLE Coffee Table, 2-Tier Center Table with Storage, Tapered Legs",
+    "dimsFrom": "estimate",
+    "file": "assets/items/B0DRHQ2KLG.svg",
+    "view": {
+      "w": 88,
+      "h": 76
+    },
+    "dims": {
+      "w": 39.4,
+      "d": 21.7,
+      "h": 17.7
+    },
+    "anchor": {
+      "x": 43.55,
+      "y": 53.43
+    },
+    "footprint": {
+      "shape": "rect",
+      "w": 39.4,
+      "d": 21.7,
+      "outline": [
+        [
+          31.03,
+          31.83
+        ],
+        [
+          86.75,
+          59.69
+        ],
+        [
+          56.06,
+          75.03
+        ],
+        [
+          0.34,
+          47.17
+        ]
+      ]
+    },
+    "sourceImage": "https://images-na.ssl-images-amazon.com/images/I/71zgAH5z3mL._AC_SL1000_.jpg",
+    "productUrl": "https://www.amazon.com/dp/B0DRHQ2KLG"
   }
-] as const;
+] as unknown as Omit<ItemAsset, 'svg'>[];
 
-export const itemAssets: ItemAsset[] = data.map((m) => ({
-  ...m,
-  svg: svgs[m.id],
-  footprint: { ...m.footprint, outline: m.footprint.outline.map(([x, y]) => [x, y] as [number, number]) },
-}));
+export const itemAssets: ItemAsset[] = data.map((m) => ({ ...m, svg: svgs[m.id] }));
 
 export const itemForProduct = (productId: string) => itemAssets.find((a) => a.productId === productId);

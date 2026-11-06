@@ -2,7 +2,13 @@
 
 Every furniture item in ENVEE is a line drawing in the Hairline style. All of them are drawn from **one camera, at one scale**, so any two items line up when they're placed in a room. The welcome screen's room (`hairline/layers.js`) is the reference.
 
-Source: `hairline/items/items.js` · Build: `npm run build:items` · Preview: `node scripts/preview-items.mjs` → `docs/hairline-pilot.png`
+Source: `hairline/items/` (`kit.js` builders, `pilot.js`, `amazon.js`) · Build: `npm run build:items` · Review sheet: `npm run sheet:items` → `docs/hairline-items.png` · Rooms: `npm run preview:items -- pilot|amazon` → `docs/hairline-pilot.png`, `docs/hairline-room-amazon.png`
+
+Drawn so far: the 5 pilot pieces (style references) and the 30 cached Amazon Best Sellers that have a sticker. Each Amazon item is a kit builder (sofa, floorChair, recliner, glider, lounge, sling, rockerLounger, swivelChair, stickLamp, torchiere, hookLamp, caseTable, drumTable, twoTier, panelTable, glassTable) plus numbers read off its photo. Lift tops are drawn closed and recliners upright; props in the photos are left out.
+
+![Amazon items](hairline-items.png)
+
+![Amazon room](hairline-room-amazon.png)
 
 ![Pilot](hairline-pilot.png)
 
@@ -72,7 +78,8 @@ Each item gets:
 | `dims` | real W × D × H, in inches (bounding box) |
 | `anchor` | **floor anchor**: the centre of where the item touches the floor, in viewBox units from the SVG's top-left |
 | `footprint` | `shape` (`rect`/`ellipse`), `w` × `d` in inches, and its `outline` projected in viewBox units |
-| `sourceImage` | the original product photo's URL, for "see real photo" (`null` until the catalog has real URLs) |
+| `dimsFrom` | `name` when the product title states the size, `estimate` when it's a typical size for the kind (to replace with real dimensions), `spec` for the pilot |
+| `sourceImage`, `productUrl` | the Amazon photo and page, from the cache, for "see real photo" (`null` for the pilot) |
 
 The footprint can be smaller than `dims`. An arc lamp's footprint is just its base, and a pedestal table's is just its foot, so the anchor sits where the piece really stands.
 

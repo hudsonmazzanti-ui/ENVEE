@@ -16,13 +16,27 @@ const { spec, items } = JSON.parse(fs.readFileSync(path.join(root, 'assets/items
 const svgs = Object.fromEntries(items.map((m) => [m.id, fs.readFileSync(path.join(root, m.file), 'utf8')]));
 
 // The room, in inches: 12'6" × 10' of floor, an 7' back wall along x. Floor points are where each anchor goes.
-const PLACE = [
-  { id: 'rug', at: [72, 66] },
-  { id: 'floorlamp', at: [14, 28] },
-  { id: 'sofa', at: [76, 21] },
-  { id: 'chair', at: [36, 80], mirror: true },
-  { id: 'coffeetable', at: [76, 68] },
-];
+const ROOMS = {
+  // The pilot: the five pieces that set the style.
+  pilot: [
+    { id: 'pilot-rug', at: [72, 66] },
+    { id: 'pilot-floorlamp', at: [14, 28] },
+    { id: 'pilot-sofa', at: [76, 21] },
+    { id: 'pilot-chair', at: [36, 80], mirror: true },
+    { id: 'pilot-coffeetable', at: [76, 68] },
+  ],
+  // Amazon best sellers together: a sectional, a torchiere, an arched lamp, a swivel recliner, a drum table.
+  amazon: [
+    { id: 'pilot-rug', at: [64, 74] },
+    { id: 'B08T1N86Q5', at: [8, 8] },
+    { id: 'B0HKDCYMFF', at: [62, 31] },
+    { id: 'B086ZLGLV3', at: [124, 12], mirror: true },
+    { id: 'B0F64KYP45', at: [60, 82] },
+    { id: 'B0FJL9N76F', at: [130, 98] },
+  ],
+};
+const which = process.argv[2] ?? 'pilot';
+const PLACE = ROOMS[which];
 const ROOM_S = 1.62; // the room's px per inch in its 400 × 320 viewBox
 
 const GROUNDS = {
@@ -131,6 +145,6 @@ await page.setContent(`<!doctype html><html><body style="margin:0;background:#FF
   .map((p) => `<figure style="margin:0"><div style="width:630px;height:504px;border-radius:12px;overflow:hidden">${p.svg.replace('<svg ', '<svg width="630" height="504" ')}</div><figcaption style="margin-top:8px">${p.label}</figcaption></figure>`)
   .join('')}</div></body></html>`);
 fs.mkdirSync(path.join(root, 'docs'), { recursive: true });
-await page.screenshot({ path: path.join(root, 'docs/hairline-pilot.png'), fullPage: true });
+await page.screenshot({ path: path.join(root, which === 'pilot' ? 'docs/hairline-pilot.png' : `docs/hairline-room-${which}.png`), fullPage: true });
 await browser.close();
-console.log('wrote docs/hairline-pilot.png');
+console.log(`wrote the ${which} room`);

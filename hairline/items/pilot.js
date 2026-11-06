@@ -1,5 +1,6 @@
 /**
- * ENVEE's furniture as Hairline line-art assets. See docs/hairline-assets.md for the spec.
+ * The pilot: five pieces drawn to set the style, after the illustrated placeholder catalog. Only the chair is still
+ * in the catalog; the others stay as style references (productId null). See docs/hairline-assets.md for the spec.
  *
  * Every item is drawn in the same world, in the same view:
  *   - one world unit is one inch
@@ -55,7 +56,7 @@
   // ---------------------------------------------------------------- sofa
   // Emerald Velvet Sofa, 84" W × 36" D × 33" H: tapered legs, rounded track arms, two back and two seat cushions.
   items.push({
-    id: "sofa", productId: "sofa", name: "Emerald Velvet Sofa",
+    id: "pilot-sofa", productId: null, name: "Emerald Velvet Sofa",
     dims: { w: 84, d: 36, h: 33 },
     draw(add) {
       const W = 84, D = 36, arm = 10, legH = 5;
@@ -74,7 +75,7 @@
   // Arc Floor Lamp, Brass, 72" H × 48" reach: a marble slab base, a brass arc, a domed shade hanging at the end.
   // The arc reaches along +x; mirroring sends it the other way. The footprint is only the base.
   items.push({
-    id: "floorlamp", productId: "floorlamp", name: "Arc Floor Lamp, Brass",
+    id: "pilot-floorlamp", productId: null, name: "Arc Floor Lamp, Brass",
     dims: { w: 63, d: 16, h: 72 },
     foot: { x0: 0, y0: 2, x1: 14, y1: 14, shape: "rect" },
     draw(add) {
@@ -97,7 +98,7 @@
   // ---------------------------------------------------------------- rug
   // Oval Wool Rug, Oat, 6' × 9': a low oval slab, a tonal border, and a medallion.
   items.push({
-    id: "rug", productId: "rug", name: "Oval Wool Rug, Oat",
+    id: "pilot-rug", productId: null, name: "Oval Wool Rug, Oat",
     dims: { w: 108, d: 72, h: 0.5 },
     foot: { x0: 0, y0: 0, x1: 108, y1: 72, shape: "ellipse" },
     draw(add) {
@@ -110,7 +111,7 @@
   // ---------------------------------------------------------------- chair
   // Oak Spindle Chair, 20" W × 21" D × 33" H: splayed tapered legs, a padded seat, two posts and a padded back.
   items.push({
-    id: "chair", productId: "chair", name: "Oak Spindle Chair",
+    id: "pilot-chair", productId: "chair", name: "Oak Spindle Chair",
     dims: { w: 20, d: 21, h: 33 },
     draw(add) {
       const seat = 17.5;
@@ -127,7 +128,7 @@
   // ---------------------------------------------------------------- coffee table
   // Round Oak Pedestal Table, 36" Ø × 16" H: a round foot, a tapered pedestal, a thick round top.
   items.push({
-    id: "coffeetable", productId: "coffeetable", name: "Round Oak Pedestal Table",
+    id: "pilot-coffeetable", productId: null, name: "Round Oak Pedestal Table",
     dims: { w: 36, d: 36, h: 16 },
     foot: { x0: 9, y0: 9, x1: 27, y1: 27, shape: "ellipse" },
     draw(add) {
@@ -137,5 +138,5 @@
     },
   });
 
-  window.ENVEE_ITEMS = items;
+  window.ENVEE_ITEMS = (window.ENVEE_ITEMS || []).concat(items);
 })();
