@@ -80,23 +80,24 @@
     const z0 = legs, la = arms === 'both' || arms === 'left', ra = arms === 'both' || arms === 'right';
     if (legs) for (const [x, y] of [[4, 4], [w - 4, 4], [4, depth - 3], [w - 4, depth - 3]]) add(leg(x, y, 0, 0, 1.2, 2, 0, legs));
     const xi0 = la ? armW : 0, xi1 = ra ? w - armW : w;
-    const cx0 = chaise ? (chaise.side === 'left' ? xi0 : xi1 - chaise.w) : xi1, cx1 = chaise ? (chaise.side === 'left' ? xi0 + chaise.w : xi1) : xi1;
-    const armD = (side) => (chaise && chaise.side === side ? d : depth);
+    const sides = chaise ? (chaise.side === 'both' ? ['left', 'right'] : [chaise.side]) : [];
+    const has = (side) => sides.includes(side);
+    const armD = (side) => (has(side) ? d : depth);
     if (la) add(box(0, 2, armW, armD('left'), r + 1, 1.6, z0, armH));
     add(box(xi0 - (la ? 1 : 0), 0, xi1 + (ra ? 1 : 0), backD, r, 1.6, z0, h));
     const bw = (xi1 - xi0) / backCushions;
     for (let i = 0; i < backCushions; i++) add(box(xi0 + i * bw + 0.5, backD - 2, xi0 + (i + 1) * bw - 0.5, backD + 6, r, 1.4, seatZ - 1, h - 2));
-    const main = () => {
-      const m0 = chaise && chaise.side === 'left' ? cx1 : xi0, m1 = chaise && chaise.side === 'right' ? cx0 : xi1;
-      add(box(m0, backD, m1, depth, 2, 1, z0, seatZ - 5));
-      const sw = (m1 - m0) / seats;
-      for (let i = 0; i < seats; i++) add(box(m0 + i * sw + 0.5, backD + 5, m0 + (i + 1) * sw - 0.5, depth - 0.3, r, 1.4, seatZ - 5, seatZ));
+    const cw = chaise ? chaise.w : 0;
+    const ch = (c0, c1) => {
+      add(box(c0, backD, c1, d, 2, 1, z0, seatZ - 5));
+      add(box(c0 + 0.5, backD + 5, c1 - 0.5, d - 0.3, r, 1.4, seatZ - 5, seatZ));
     };
-    const ch = () => {
-      add(box(cx0, backD, cx1, d, 2, 1, z0, seatZ - 5));
-      add(box(cx0 + 0.5, backD + 5, cx1 - 0.5, d - 0.3, r, 1.4, seatZ - 5, seatZ));
-    };
-    if (chaise && chaise.side === 'left') { ch(); main(); } else { main(); if (chaise) ch(); }
+    const m0 = has('left') ? xi0 + cw : xi0, m1 = has('right') ? xi1 - cw : xi1;
+    if (has('left')) ch(xi0, xi0 + cw);
+    add(box(m0, backD, m1, depth, 2, 1, z0, seatZ - 5));
+    const sw = (m1 - m0) / seats;
+    for (let i = 0; i < seats; i++) add(box(m0 + i * sw + 0.5, backD + 5, m0 + (i + 1) * sw - 0.5, depth - 0.3, r, 1.4, seatZ - 5, seatZ));
+    if (has('right')) ch(xi1 - cw, xi1);
     if (ra) add(box(w - armW, 2, w, armD('right'), r + 1, 1.6, z0, armH));
   };
 
@@ -115,6 +116,7 @@
     let z0 = 0;
     if (base === 'swivel') { add(drum(w / 2, d / 2, 11, 11, 0, 2.5, 0.8)); z0 = 2.5; }
     if (base === 'rocker') { add(box(4, 5, w - 4, d - 5, 2, 1, 0, 2.5)); z0 = 2.5; }
+    if (base === 'legs') { for (const [x, y] of [[3, 4], [w - 3, 4]]) add(leg(x, y, 0, 0, 1.4, 1.8, 0, 3)); z0 = 3; }
     add(box(0, 3, armW, d - 1, r + 1, 1.6, z0, armH));
     add(box(armW - 1, 0, w - armW + 1, 9, r, 1.6, z0, h));
     const th = (h - 1.5 - seatZ) / tiers;
@@ -122,6 +124,7 @@
     add(box(armW, 9, w - armW, d - 0.5, 2, 1, z0, seatZ - 4));
     add(box(armW + 0.3, 11, w - armW - 0.3, d, r - 1, 1.4, seatZ - 4, seatZ));
     add(box(w - armW, 3, w, d - 1, r + 1, 1.6, z0, armH));
+    if (base === 'legs') for (const [x, y] of [[3, d - 3], [w - 3, d - 3]]) add(leg(x, y, 0, 0, 1.4, 1.8, 0, 3));
   };
 
   /** A padded ottoman on legs ('taper', 'x' cross legs, 'block' to the floor), its back at y0. */
@@ -192,19 +195,21 @@
     for (const [x, y] of ends) add(drum(x, y, 1.1, 1.1, 0, 2.2, 0.3));
     add(drum(cx, cy, 2.2, 1.6, 2.6, 4.2, 0.4));
     add(drum(cx, cy, 1, 1, 4.2, seatZ - 3, 0.3));
-    add(box(1, 0, w - 1, 5, 3, 1.2, seatZ - 2, h));
-    add(box(0, 1.5, 3.4, d - 4, 1.7, 0.8, seatZ - 2, seatZ + 7));
-    add(box(2.5, 3, w - 2.5, d, 5, 1.6, seatZ - 3, seatZ + 1));
-    add(box(w - 3.4, 1.5, w, d - 4, 1.7, 0.8, seatZ - 2, seatZ + 7));
+    const arms = o.arms !== false;
+    add(box(arms ? 1 : 3, 0, w - (arms ? 1 : 3), 5, 3, 1.2, seatZ - 2, h));
+    if (arms) add(box(0, 1.5, 3.4, d - 4, 1.7, 0.8, seatZ - 2, seatZ + 7));
+    add(box(2.5, 3, w - 2.5, d, arms ? 5 : (w - 5) / 2.2, 1.6, seatZ - 3, seatZ + 1));
+    if (arms) add(box(w - 3.4, 1.5, w, d - 4, 1.7, 0.8, seatZ - 2, seatZ + 7));
   };
 
   // ---------------------------------------------------------------- lamps (base centred at (cx, cy))
   /** A stick lamp: a round base, a pole, a drum shade. */
   B.stickLamp = (add, o) => {
-    const { h, baseR = 5, shadeR = 6.5, shadeH = 10, cx = 7, cy = 7 } = o;
+    const { h, baseR = 5, shadeR = 6.5, shadeH = 10, cx = 7, cy = 7, square = false, taper = 0 } = o;
     add(drum(cx, cy, baseR, baseR - 0.4, 0, 1.4, 0.6));
     add(lines([[[cx, cy, 1.4], [cx, cy, h - shadeH]]]), 'nf sil');
-    add(drum(cx, cy, shadeR, shadeR, h - shadeH, h, 0.6));
+    if (square) add(box(cx - shadeR, cy - shadeR, cx + shadeR, cy + shadeR, 1, 0.6, h - shadeH, h));
+    else add(drum(cx, cy, shadeR, shadeR - taper, h - shadeH, h, 0.6));
   };
   /** A torchiere: a round base, a pole, an up-turned bowl; optionally a reading arm with a small shade. */
   B.torchiere = (add, o) => {
@@ -253,18 +258,20 @@
   };
   /** A round storage table: a drum on short legs, fluting on its face, a top a little proud of it. */
   B.drumTable = (add, o) => {
-    const { w, h, legH = 4 } = o, R = w / 2, c = R;
-    for (const a of [225, 315, 135]) add(leg(c + (R - 4) * Math.cos((a * Math.PI) / 180), c + (R - 4) * Math.sin((a * Math.PI) / 180), 0, 0, 1.2, 1.8, 0, legH));
-    add(drum(c, c, R - 0.6, R - 0.6, legH, h - 1.2, 0.6));
+    const { w, h, legH = 4, ox = 0, oy = 0, flutes = true, pedestal = false } = o, R = w / 2, c = R;
+    const cx = c + ox, cy = c + oy, legAt = (a) => leg(cx + (R - 4) * Math.cos((a * Math.PI) / 180), cy + (R - 4) * Math.sin((a * Math.PI) / 180), 0, 0, 1.2, 1.8, 0, legH);
+    if (legH) for (const a of [225, 315, 135]) add(legAt(a));
+    if (pedestal) { add(drum(cx, cy, R * 0.62, R * 0.62, 0, h - 4, 0.6)); add(drum(cx, cy, R, R, h - 4, h, 1)); return; }
+    add(drum(cx, cy, R - 0.6, R - 0.6, legH, h - 1.2, 0.6));
     const fl = [];
-    for (let a = -10; a <= 95; a += 7.5) { const t = (a * Math.PI) / 180; fl.push([[c + (R - 0.6) * Math.cos(t), c + (R - 0.6) * Math.sin(t), legH + 1.2], [c + (R - 0.6) * Math.cos(t), c + (R - 0.6) * Math.sin(t), h - 2.4]]); }
-    add(lines(fl), 'nf lo');
-    add(leg(c + (R - 4) * Math.cos(Math.PI / 4), c + (R - 4) * Math.sin(Math.PI / 4), 0, 0, 1.2, 1.8, 0, legH));
-    add(drum(c, c, R, R, h - 1.2, h, 1));
+    if (flutes) for (let a = -10; a <= 95; a += 7.5) { const t = (a * Math.PI) / 180; fl.push([[cx + (R - 0.6) * Math.cos(t), cy + (R - 0.6) * Math.sin(t), legH + 1.2], [cx + (R - 0.6) * Math.cos(t), cy + (R - 0.6) * Math.sin(t), h - 2.4]]); }
+    if (fl.length) add(lines(fl), 'nf lo');
+    if (legH) add(legAt(45));
+    add(drum(cx, cy, R, R, h - 1.2, h, 1));
   };
   /** A two-tier table: a top and a lower shelf, on splayed tapered legs or on two U frames. shape: rect, oval, round. */
   B.twoTier = (add, o) => {
-    const { w, d, h, shape = 'rect', legs = 'taper', shelfZ = 5, inset = 3, top = 1.2, splay = 1.4 } = o;
+    const { w, d, h, shape = 'rect', legs = 'taper', shelfZ = 5, inset = 3, top = 1.2, splay = 1.4, shelf = true } = o;
     const ring = (x0, y0, x1, y1, r) => (shape === 'round' ? oval((x0 + x1) / 2, (y0 + y1) / 2, (x1 - x0) / 2, (y1 - y0) / 2) : shape === 'oval' ? stadium(x0, y0, x1, y1) : rrect(x0, y0, x1, y1, r, 6));
     const inner = (x0, y0, x1, y1, r, b) => ring(x0 + b, y0 + b, x1 - b, y1 - b, Math.max(0.3, r - b));
     let pts;
@@ -272,13 +279,16 @@
     else pts = [[inset, inset], [w - inset, inset], [inset, d - inset], [w - inset, d - inset]];
     const isBack = (y) => y < d / 2;
     const drawLeg = ([x, y]) => {
-      if (legs === 'frame') add(box(x - 0.7, y - 0.7, x + 0.7, y + 0.7, 0.4, 0.2, 1.2, h - top));
+      if (legs === 'frame' || legs === 'xbase') add(box(x - 0.7, y - 0.7, x + 0.7, y + 0.7, 0.4, 0.2, legs === 'xbase' ? 0 : 1.2, h - top));
+      else if (legs === 'block') add(box(x - 1.6, y - 1.6, x + 1.6, y + 1.6, 0.6, 0.4, 0, h - top));
       else { const sx = Math.sign(x - w / 2), sy = Math.sign(y - d / 2); add(leg(x, y, sx * splay, sy * splay, 1.1, 1.9, 0, h - top)); }
     };
-    if (legs === 'frame') for (const x of [inset, w - inset]) add(box(x - 0.7, inset - 0.7, x + 0.7, d - inset + 0.7, 0.4, 0.2, 0, 1.2));
+    if (legs === 'frame' && shape === 'round') add(slab(oval(w / 2, d / 2, w / 2 - inset + 0.7, d / 2 - inset + 0.7), oval(w / 2, d / 2, w / 2 - inset - 0.5, d / 2 - inset - 0.5), 0, 1.2));
+    else if (legs === 'frame') for (const x of [inset, w - inset]) add(box(x - 0.7, inset - 0.7, x + 0.7, d - inset + 0.7, 0.4, 0.2, 0, 1.2));
+    if (legs === 'xbase') add(lines([[[pts[0][0], pts[0][1], 0.6], [pts[3][0], pts[3][1], 0.6]], [[pts[1][0], pts[1][1], 0.6], [pts[2][0], pts[2][1], 0.6]]]), 'nf sil');
     pts.filter(([, y]) => isBack(y)).forEach(drawLeg);
     const s = inset - 1.5;
-    add(slab(ring(s, s, w - s, d - s, 2), inner(s, s, w - s, d - s, 2, 0.8), shelfZ, shelfZ + 1));
+    if (shelf) add(slab(ring(s, s, w - s, d - s, 2), inner(s, s, w - s, d - s, 2, 0.8), shelfZ, shelfZ + 1));
     pts.filter(([, y]) => !isBack(y)).forEach(drawLeg);
     add(slab(ring(0, 0, w, d, 2), inner(0, 0, w, d, 2, 1), h - top, h));
   };
@@ -301,6 +311,148 @@
     const topPts = fillet([[0, 2], [w, d * 0.35], [w * 0.55, d], [2, d - 2]], [10, 10, 10, 10]).map(([u, v]) => ({ u, v }));
     add(onTop(topPts, h - 0.6), 'nf lo');
     add(onTop(topPts, h), 'nf sil');
+  };
+
+
+  /** A folding foam mattress, folded: its layers stacked. */
+  B.mattress = (add, o) => {
+    const { w, d, layers = 3, layerH = 6 } = o;
+    for (let i = 0; i < layers; i++) add(box(0, 0, w, d, 4, 1.4, i * layerH, (i + 1) * layerH));
+  };
+
+  /** A wood-frame armchair: tapered legs, open arm rails on front posts, a seat cushion and a back cushion leaning back. */
+  B.woodArm = (add, o) => {
+    const { w, d, h, seatZ = 17, armH = 24, lean = 0.25 } = o;
+    for (const x of [2, w - 2]) add(leg(x, 3, 0, -0.6, 1.2, 1.8, 0, seatZ - 3));
+    add(box(0.8, 2, 3.2, d, 1, 0.5, armH - 1.4, armH));
+    add(box(1.2, d - 3, 2.8, d - 1.4, 0.6, 0.3, seatZ - 3, armH - 1.4));
+    add(plate([3, 5, seatZ - 3], [1, 0, 0], [0, -lean, 1], w - 6, h - seatZ + 2, 3, 3.5));
+    add(box(3, 4, w - 3, d - 1, 2.4, 1.2, seatZ - 4, seatZ));
+    add(leg(2, d - 2, 0, 0.6, 1.2, 1.8, 0, seatZ - 3));
+    add(box(w - 2.8, d - 3, w - 1.2, d - 1.4, 0.6, 0.3, seatZ - 3, armH - 1.4));
+    add(box(w - 3.2, 2, w - 0.8, d, 1, 0.5, armH - 1.4, armH));
+    add(leg(w - 2, d - 2, 0, 0.6, 1.2, 1.8, 0, seatZ - 3));
+  };
+
+  /** A saucer chair: a round padded dish tipped back on a folding X frame. */
+  B.saucer = (add, o) => {
+    const { w, d, h } = o, zf = 12, R = w / 2;
+    // the folding frame: on each side, two legs crossing under the dish
+    const frame = (x) => add(lines([[[x, 3, 0], [x, d - 5, zf]], [[x, d - 3, 0], [x, 5, zf + 3]]]), 'nf sil');
+    frame(4);
+    // the dish: an oval cushion tipped back, rim and hollow drawn as rings in its tilted plane
+    const c = [R, d / 2 + 1, zf + (h - zf) / 2 - 2], tilt = 0.75, n = 64;
+    const ring = (rx, ry, lift) => Array.from({ length: n }, (_, k) => { const t = (2 * Math.PI * k) / n, u = rx * Math.cos(t), v = ry * Math.sin(t);
+      return [c[0] + u, c[1] - v * Math.cos(tilt) + lift * Math.sin(tilt), c[2] + v * Math.sin(tilt) + lift * Math.cos(tilt)]; });
+    const ry = Math.hypot(d / 2, (h - zf) / 2) * 0.9;
+    add((P) => ({ sil: poly(hull([...ring(R, ry, -2.5), ...ring(R, ry, 2.5)].map((q) => P(...q)))), crease: poly(ring(R - 4, ry - 4, 2.5).map((q) => P(...q))) }));
+    frame(w - 4);
+  };
+
+
+  /**
+   * A barrel or tub chair: a rounded back wrapping into the arms, a deep seat.
+   * base: 'peg' short legs under an upholstered body, 'metal' tall thin legs, 'swivel' a round plate, 'drum' a round
+   * storage base (a vanity stool).
+   */
+  B.tub = (add, o) => {
+    const { w, d, h, seatZ = 18, armH = seatZ + 8, base = 'peg', armW = 5 } = o;
+    let z0 = 0;
+    if (base === 'peg') { for (const [x, y] of [[3, 3], [w - 3, 3]]) add(leg(x, y, 0, 0, 1.4, 1.8, 0, 4)); z0 = 4; }
+    if (base === 'metal') { for (const [x, y, s] of [[3, 4, -1], [w - 3, 4, 1]]) add(leg(x, y, s, -1.4, 0.7, 0.9, 0, seatZ - 3)); z0 = seatZ - 3; }
+    if (base === 'swivel') { add(drum(w / 2, d / 2, w / 2.6, w / 2.6, 0, 2, 0.6)); add(drum(w / 2, d / 2, 2.5, 2.5, 2, 6, 0.4)); z0 = 6; }
+    if (base === 'drum') { add(drum(w / 2, d / 2 + 1, w / 2 - 1, w / 2 - 1, 0, seatZ - 3, 0.8)); }
+    add(box(0, 0, w, 7, 4, 1.6, z0, h));
+    if (armW) add(box(0, 2, armW, d - 2, 3.5, 1.4, z0, armH));
+    if (base === 'peg' || base === 'swivel') add(box(armW - 1, 5, w - armW + 1, d - 1.5, 2.5, 1, z0, seatZ - 4));
+    if (base !== 'drum') add(box(armW - 0.5, 5, w - armW + 0.5, d - 1, 3.5, 1.4, seatZ - 4, seatZ));
+    else add(drum(w / 2, d / 2 + 1, w / 2 - 0.5, w / 2 - 0.5, seatZ - 3, seatZ, 1));
+    if (base === 'metal') for (const [x, y, s] of [[3, d - 3, -1], [w - 3, d - 3, 1]]) add(leg(x, y, s, 1.4, 0.7, 0.9, 0, seatZ - 3));
+    if (base === 'peg') for (const [x, y] of [[3, d - 3], [w - 3, d - 3]]) add(leg(x, y, 0, 0, 1.4, 1.8, 0, 4));
+    if (armW) add(box(w - armW, 2, w, d - 2, 3.5, 1.4, z0, armH));
+  };
+
+  /** A floor seat: a padded seat on the floor and a padded back folded up behind it. */
+  B.floorSeat = (add, o) => {
+    const { w, d, h } = o, seatD = d * 0.55;
+    add(plate([0, d - seatD, 2.5], [1, 0, 0], [0, -0.45, 1], w, Math.hypot(d - seatD, h), 4, 4));
+    add(box(0, d - seatD, w, d, 4, 1.4, 0, 4));
+  };
+
+  /** A light bar: a round base (or a tripod) and one slim upright bar. */
+  B.barLamp = (add, o) => {
+    const { h, baseR = 4.5, tripod = false, bar = 1.2, cx = 5, cy = 5 } = o;
+    if (tripod) add(lines([0, 120, 240].map((a) => [[cx, cy, 6], [cx + baseR * Math.cos((a * Math.PI) / 180), cy + baseR * Math.sin((a * Math.PI) / 180), 0]])), 'nf sil');
+    else add(drum(cx, cy, baseR, baseR - 0.4, 0, 1.2, 0.6));
+    add(box(cx - bar / 2, cy - bar / 2, cx + bar / 2, cy + bar / 2, bar / 2.4, 0.2, tripod ? 6 : 1.2, h));
+  };
+
+  /** A gooseneck reading lamp: a base, a pole, a neck curving out along +x, a flat head facing down. */
+  B.gooseLamp = (add, o) => {
+    const { h, reach = 10, head = 9, baseR = 5, cx = 5.5, cy = 5.5, disc = false } = o;
+    add(drum(cx, cy, baseR, baseR - 0.4, 0, 1.4, 0.6));
+    const neck = [[cx, cy, 1.4], [cx, cy, h - 12]];
+    for (let i = 1; i <= 10; i++) { const t = (i / 10) * (Math.PI / 2); neck.push([cx + reach * (1 - Math.cos(t)), cy, h - 12 + 12 * Math.sin(t)]); }
+    add(path(neck), 'nf sil');
+    const hx = cx + reach;
+    if (disc) add(drum(hx + head / 2 - 1, cy, head / 2, head / 2, h - 2, h, 0.6));
+    else add(box(hx - 1, cy - 2.2, hx + head, cy + 2.2, 2, 0.6, h - 1.6, h));
+  };
+
+  /** A tree lamp: a base, a pole, and several shades on short arms. shades: [dx, dy, z, kind] with kind 'drum' | 'cage'. */
+  B.treeLamp = (add, o) => {
+    const { h, baseR = 5, cx = 8, cy = 8, shades, shelves = [] } = o;
+    add(drum(cx, cy, baseR, baseR - 0.4, 0, 1.4, 0.6));
+    add(lines([[[cx, cy, 1.4], [cx, cy, h - 2]]]), 'nf sil');
+    for (const z of shelves) add(drum(cx, cy, 6, 6, z, z + 0.8, 0.5));
+    for (const [dx, dy, z] of shades) {
+      add(path([[cx, cy, z + 2], [cx + dx * 0.6, cy + dy * 0.6, z + 4], [cx + dx, cy + dy, z + 4], [cx + dx, cy + dy, z + 2]]), 'nf sil');
+      add(drum(cx + dx, cy + dy, 3.2, 2.6, z - 7, z + 2, 0.5));
+    }
+  };
+
+  /** A shelf lamp: a slim square frame with shelves inside and a square shade on top. */
+  B.shelfLamp = (add, o) => {
+    const { w = 11, h, shelves = 3, shade = 12 } = o;
+    const zt = h - shade, posts = [[1, 1], [w - 1, 1], [1, w - 1], [w - 1, w - 1]];
+    for (const [x, y] of posts.slice(0, 2)) add(box(x - 0.6, y - 0.6, x + 0.6, y + 0.6, 0.3, 0.2, 0, zt));
+    for (let i = 0; i <= shelves; i++) { const z = 1 + (i * (zt - 1)) / shelves; add(box(0.4, 0.4, w - 0.4, w - 0.4, 0.6, 0.4, z - 0.8, z)); }
+    for (const [x, y] of posts.slice(2)) add(box(x - 0.6, y - 0.6, x + 0.6, y + 0.6, 0.3, 0.2, 0, zt));
+    add(box(0, 0, w, w, 1, 0.6, zt, h));
+  };
+
+  /** A small end table with shelves (frame posts and three shelves), with a lamp standing at its back corner. */
+  B.lampTable = (add, o) => {
+    const { w = 18, d = 14, h = 24, lampH = 62 } = o;
+    for (const [x, y] of [[1, 1], [w - 1, 1]]) add(box(x - 0.6, y - 0.6, x + 0.6, y + 0.6, 0.3, 0.2, 0, h));
+    B.hookLamp(add, { h: lampH, reach: 14, baseR: 0.1, shadeR: 6, shadeH: 8, drop: 11, cx: 2, cy: 2 });
+    for (const z of [1.5, h / 2, h]) add(box(0, 0, w, d, 0.8, 0.5, z - 0.9, z));
+    for (const [x, y] of [[1, d - 1], [w - 1, d - 1]]) add(box(x - 0.6, y - 0.6, x + 0.6, y + 0.6, 0.3, 0.2, 0, h - 0.9));
+  };
+
+  /** A rug: a low slab (deeper for shag), with its pattern as a few dim lines. motif: plain, border, medallion, plaid. */
+  B.rug = (add, o) => {
+    const { w, d, shape = 'rect', motif = 'border', shag = false } = o, t = shag ? 1.2 : 0.5;
+    const R = (x0, y0, x1, y1, r) => (shape === 'round' ? oval((x0 + x1) / 2, (y0 + y1) / 2, (x1 - x0) / 2, (y1 - y0) / 2) : rrect(x0, y0, x1, y1, r, 6));
+    add(slab(R(0, 0, w, d, shape === 'scallop' ? 4 : 1.5), R(0.8, 0.8, w - 0.8, d - 0.8, 1), 0, t));
+    const m = Math.max(2, Math.min(w, d) * 0.08);
+    if (motif === 'border' || motif === 'medallion') add(onTop(R(m, m, w - m, d - m, 1), t), 'nf lo');
+    if (motif === 'medallion') add(onTop(oval(w / 2, d / 2, w * 0.18, d * 0.18), t), 'nf lo');
+    if (motif === 'plaid') {
+      const L = [], n = 4;
+      for (let i = 1; i < n; i++) { L.push([[(w * i) / n, 0.8, t], [(w * i) / n, d - 0.8, t]]); L.push([[0.8, (d * i) / n, t], [w - 0.8, (d * i) / n, t]]); }
+      add(lines(L), 'nf lo');
+    }
+  };
+
+  /** A glass-topped table on a slim metal box frame with a lower glass shelf. */
+  B.frameTable = (add, o) => {
+    const { w, d, h, shelfZ = 3 } = o, p = (x, y) => box(x - 0.5, y - 0.5, x + 0.5, y + 0.5, 0.25, 0.1, 0, h - 0.4);
+    add(p(0.5, 0.5)); add(p(w - 0.5, 0.5));
+    add(onTop(rrect(0.5, 0.5, w - 0.5, d - 0.5, 0.5, 4), shelfZ), 'nf lo');
+    add(p(0.5, d - 0.5)); add(p(w - 0.5, d - 0.5));
+    add(onTop(rrect(0, 0, w, d, 0.6, 4), h - 0.4), 'nf lo');
+    add(onTop(rrect(0, 0, w, d, 0.6, 4), h), 'nf sil');
   };
 
   window.ENVEE_KIT = { B, box, drum, oval, onTop, onFront, onSide, leg, path, lines, plate, roll };

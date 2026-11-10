@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons';
 import { Image } from 'expo-image';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { RoomCanvas, ROOM_RATIO } from '@/components/RoomCanvas';
@@ -22,12 +22,13 @@ export default function RoomEditor() {
   const [selected, setSelected] = useState<string | null>(null);
   const [compare, setCompare] = useState(false);
   const [dragging, setDragging] = useState(false);
+  const [photoOf, setPhotoOf] = useState<string | null>(null);
 
   const sel = space.stickers.find((s) => s.uid === selected);
   const selProduct = sel ? productById(sel.productId) : null;
   const canvasH = W * ROOM_RATIO;
 
-  const act = (t: 'sticker/front' | 'sticker/remove') => {
+  const act = (t: 'sticker/front' | 'sticker/remove' | 'sticker/flip') => {
     if (!sel) return;
     dispatch({ t, spaceId: space.id, uid: sel.uid });
     if (t === 'sticker/remove') setSelected(null);
@@ -62,7 +63,7 @@ export default function RoomEditor() {
             width={W}
             selected={selected}
             onSelect={setSelected}
-            onMove={(uid, x, y) => dispatch({ t: 'sticker/move', spaceId: space.id, uid, x, y })}
+            onMove={(uid, fx, fy) => dispatch({ t: 'sticker/move', spaceId: space.id, uid, fx, fy })}
             onDragChange={setDragging}
           />
           {compare ? (
@@ -84,8 +85,8 @@ export default function RoomEditor() {
                 <Feather name="chevron-right" size={18} color={C.text3} />
               </Pressable>
               <View style={styles.tools}>
-                <Tool icon="minus" label="Smaller" onPress={() => dispatch({ t: 'sticker/resize', spaceId: space.id, uid: sel.uid, factor: 0.88 })} />
-                <Tool icon="plus" label="Larger" onPress={() => dispatch({ t: 'sticker/resize', spaceId: space.id, uid: sel.uid, factor: 1.12 })} />
+                <Tool icon="repeat" label="Flip" onPress={() => act('sticker/flip')} />
+                <Tool icon="image" label="Real photo" onPress={() => setPhotoOf(selProduct.id)} />
                 <Tool icon="layers" label="Front" onPress={() => act('sticker/front')} />
                 <Tool icon="trash-2" label="Remove" onPress={() => act('sticker/remove')} />
               </View>
@@ -118,6 +119,8 @@ export default function RoomEditor() {
 
       </ScrollView>
 
+      <RealPhoto productId={photoOf} onClose={() => setPhotoOf(null)} />
+
       <View style={[styles.bottom, { paddingBottom: Math.max(insets.bottom, 14) }]}>
         <View style={{ flex: 1 }}>
           <Txt v="heading" style={{ fontSize: 20 }}>{money(spaceTotal(space))}</Txt>
@@ -125,6 +128,27 @@ export default function RoomEditor() {
         <Button label="Shop this room" onPress={() => router.push(`/room/${space.id}/shop`)} />
       </View>
     </View>
+  );
+}
+
+/** "See real photo": the product's own photo, since the room shows it as a line drawing. */
+function RealPhoto({ productId, onClose }: { productId: string | null; onClose: () => void }) {
+  const p = productId ? productById(productId) : null;
+  return (
+    <Modal visible={!!p} transparent animationType="fade" onRequestClose={onClose}>
+      <Pressable style={styles.scrim} onPress={onClose} accessibilityLabel="Close photo">
+        {p ? (
+          <View style={[styles.photoCard, shadow]}>
+            <Image source={p.photo} style={styles.photo} contentFit="contain" transition={150} />
+            <Txt v="body" numberOfLines={2} style={{ marginTop: 10 }}>{p.name}</Txt>
+            <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
+              <Button label="Product page" kind="secondary" onPress={() => { onClose(); router.push(`/product/${p.id}`); }} style={{ flex: 1 }} />
+              <Button label="Close" onPress={onClose} style={{ flex: 1 }} />
+            </View>
+          </View>
+        ) : null}
+      </Pressable>
+    </Modal>
   );
 }
 
@@ -150,6 +174,9 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 999,
   },
+  scrim: { flex: 1, backgroundColor: 'rgba(20,20,20,0.45)', alignItems: 'center', justifyContent: 'center', padding: 20 },
+  photoCard: { width: '100%', maxWidth: 420, backgroundColor: C.bg, borderRadius: R.lg, padding: 14 },
+  photo: { width: '100%', aspectRatio: 1, borderRadius: R.md, backgroundColor: C.white },
   compareTag: {
     position: 'absolute',
     top: 14,

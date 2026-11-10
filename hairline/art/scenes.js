@@ -10,8 +10,10 @@
  *   bg      true paints a full-bleed ground rect, so the SVG stands in for a room photo
  *   draw    api = { P, front, add(build, cls) }; append back to front (rule 06)
  *
- * The four rooms use a near-frontal camera so frontal furniture cut-outs stand on their floor.
- * Everything else keeps the welcome's 2:1 view.
+ * Everything keeps the welcome's 2:1 view, Cam(45, 0.5), the one view the furniture assets are drawn in
+ * (docs/hairline-assets.md), so placed items line up with the rooms. The rooms are a corner: a back wall along x
+ * and a left wall along y. One room unit is 1.2 inches (ROOM_UNIT); build-line-art writes each room's camera to
+ * src/theme/roomGeometry.ts so the editor can stand items on its floor.
  */
 (() => {
   const { circ, hull, open, poly, prism, rad, ringAt, rings, rrect, run, seg } = HL;
@@ -66,11 +68,14 @@
   // ---------------------------------------------------------------- rooms
   // A diorama in the welcome's manner: floor slab, back wall, a baseboard, and one architectural feature.
   // World: x 0..120 across, y -6..104 from the wall out, z up. The wall's face is the plane y = -1.
-  const ROOM = { view: [300, 400], cam: [8, 0.6, 2.3], sw: 1.1, variants: { sm: 1.9 }, ground: "linen", bg: true };
-  const roomFit = [[[0, -6, -3], [120, 104, -3], [0, 104, -3], [120, -6, 84], [0, -6, 84]], 150, 222];
+  const ROOM = { view: [300, 400], cam: [45, 0.5, 1.72], sw: 1.1, variants: { sm: 1.9 }, ground: "linen", bg: true, unit: 1.2, floor: [0, -1, 120, 104] };
+  const roomFit = [[[-5, -6, -3], [120, 104, -3], [-5, 104, -3], [120, -6, 84], [-5, -6, 84], [120, 104, -3]], 150, 214];
+  /** The floor slab and the two walls: the left wall first, so the back wall covers the corner (rule 06). */
+  const floor = (add) => add(box(-5, -6, 120, 104, 6, 1.6, -3, 0));
+  const walls = (add) => { add(box(-5, -6, 0, 104, 2, 1.2, 0, 84)); add(box(0, -6, 120, -1, 2, 1.2, 0, 84)); };
   function shell(add) {
-    add(box(0, -6, 120, 104, 6, 1.6, -3, 0));
-    add(box(0, -6, 120, -1, 2, 1.2, 0, 84));
+    floor(add);
+    walls(add);
   }
   const baseboard = (add) => add(box(1, -1, 119, 0.8, 0.6, 0.4, 0, 3.2));
   /** A sash window on the wall, frame bright: outer frame, inner frame, glazing bars, sill. */
@@ -89,11 +94,11 @@
   const ROOMS = {
     // Living room: one wide window, and floorboards running out from the wall.
     living(add, bright) {
-      add(box(0, -6, 120, 104, 6, 1.6, -3, 0));
+      floor(add);
       const boards = [];
       for (let x = 12; x < 120; x += 12) boards.push([[x, 0.8, 0], [x, 102, 0]]);
       add(lines(boards), "nf lo");
-      add(box(0, -6, 120, -1, 2, 1.2, 0, 84));
+      walls(add);
       baseboard(add);
       sash(add, 30, 32, 90, 64, "vh", bright);
     },
@@ -119,11 +124,11 @@
     },
     // Rental listing: an empty apartment. A door on the left, a window to the right; the middle of the wall is free for art.
     listing(add, bright) {
-      add(box(0, -6, 120, 104, 6, 1.6, -3, 0));
+      floor(add);
       const boards = [];
       for (let x = 15; x < 120; x += 15) boards.push([[x, 0.8, 0], [x, 102, 0]]);
       add(lines(boards), "nf lo");
-      add(box(0, -6, 120, -1, 2, 1.2, 0, 84));
+      walls(add);
       baseboard(add);
       add(onWall(rrect(8, 0, 32, 60, 1.6, 4), -1), bright ? "hi" : undefined);
       add(onWall(rrect(11, 3.2, 29, 57, 1, 4), -1), "nf lo");

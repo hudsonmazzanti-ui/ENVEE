@@ -22,7 +22,7 @@ Drawn so far: the 5 pilot pieces (style references) and the 30 cached Amazon Bes
 | Elevation | 30° above the floor (`k = sin 30° = 0.5`). Floor lines run at about 26.6° (2 across : 1 down) |
 | Vertical | 1 inch of height = `S × 0.866` px |
 
-The welcome room already uses this camera everywhere, so it didn't need changing. The **in-app room backgrounds** (`hairline/art/scenes.js`, rooms and looks) use a different, near-frontal `Cam(8, 0.6)`, which was chosen to suit the old frontal photo cut-outs. To line up with these assets they have to be re-rendered at `Cam(45, 0.5)`. That's part of step 4.
+The welcome room already used this camera, so it didn't need changing. The in-app room backgrounds (`hairline/art/scenes.js`: the four rooms, the sample spaces and the looks) used a near-frontal `Cam(8, 0.6)` to suit the old photo cut-outs; they are now drawn at `Cam(45, 0.5)` too, as a corner (a back wall along x, a left wall along y), so placed items stand on their floors.
 
 **The other side.** The other 3/4 view is the same SVG mirrored with `scaleX(-1)` about the anchor. It's never drawn twice. At a 45° azimuth, a mirror swaps the world's x and y axes. So a mirrored item **faces +x**: its front points lower-right and its width runs along y. In practice the flip button turns a piece 90° to face the other wall.
 
@@ -83,12 +83,18 @@ Each item gets:
 
 The footprint can be smaller than `dims`. An arc lamp's footprint is just its base, and a pedestal table's is just its foot, so the anchor sits where the piece really stands.
 
-## 7. Placing in a room (for the editor)
+## 7. Placing in a room (the editor)
 
-```
-k        = room.pxPerInch / ITEM_PX_PER_INCH
-[sx, sy] = room.P(floorX, floorY, 0)                   // where the item stands
-transform: translate(sx, sy) scale(mirror ? -k : k, k) translate(-anchor.x, -anchor.y)
-```
+A placed piece is `{ productId, fx, fy, mirror, front? }` (`src/state/store.tsx`): where it stands on the floor, in inches, and whether it's flipped. Its size is never stored; it comes from its real dimensions.
 
-Paint order: flat items (rugs, h < 2") first, then ascending `floorX + floorY`. Known limit: pieces that overhang their footprint (an arc lamp's shade) can sort wrong against a neighbour. The editor's existing "Front" button covers that.
+- `npm run build:line-art` writes each room's camera to `src/theme/roomGeometry.ts`: scale `S`, offset `ox, oy`, `unit` (1.2 inches per room unit) and the free floor.
+- `src/lib/roomSpace.ts` maps a floor point to the room image (`project`) and back (`unproject`, used when a drag ends), and sizes a piece: `k = (S / unit) · (screen px per room unit) / ITEM_PX_PER_INCH`, with the anchor on the floor point. Mirrored, the drawing is flipped about its anchor.
+- Paint order: flat items (rugs, h < 2") first, then ascending `fx + fy`. **Front** lifts a piece over the rest, for the case this can't get right: a piece that overhangs its footprint, like an arc lamp's shade.
+- A new piece starts where its kind usually goes (`startPointFor`): a sofa with its back to the wall, a lamp in the back corner, a rug and a table in the middle, a chair to the side, stepping aside if the spot is taken.
+- **Flip** toggles `mirror`. **Real photo** opens the product's own photo.
+- A photo of the user's own room has no camera yet, so it borrows the living room's. Pieces stay in true proportion to each other, but don't sit exactly on the photo's floor.
+- A product with no drawing (some illustrated placeholders) falls back to its old cut-out, 32" wide, standing on its floor point.
+
+## 8. Adding products
+
+The Amazon items are spec rows, not hand-written code. `hairline/items/amazon.js` holds the 30 stickered ones. `scripts/items/gen-amazon-more.py` holds one row per other cached product, keyed by its index among the products without a sticker, and generates `hairline/items/amazon-more.js`. To add a product: look at its photo (`.cache/photos/<ASIN>.jpg`), pick a builder from `hairline/items/kit.js`, write its row, run the generator and `npm run build:items`, then check it on `node scripts/sheet-items.mjs --all`. Skipped: B0F5D66S16, a cushion support board, which isn't furniture.

@@ -16,7 +16,7 @@ const { chromium } = require('playwright');
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const out = path.join(root, 'assets/items');
 const kernel = fs.readFileSync(path.join(root, '.claude/skills/hairline-create/kernel.js'), 'utf8');
-const sources = ['kit.js', 'pilot.js', 'amazon.js'].map((f) => fs.readFileSync(path.join(root, 'hairline/items', f), 'utf8'));
+const sources = ['kit.js', 'pilot.js', 'amazon.js', 'amazon-more.js'].map((f) => fs.readFileSync(path.join(root, 'hairline/items', f), 'utf8'));
 // The Amazon cache: each product's title and main photo become the item's name and sourceImage.
 const cache = JSON.parse(fs.readFileSync(path.join(root, 'data/catalog/amazon-bestsellers.json'), 'utf8'));
 const cached = Object.fromEntries(Object.values(cache.categories).flatMap((c) => c.products ?? c).map((p) => [p.asin, p]));

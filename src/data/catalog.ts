@@ -22,7 +22,7 @@ export type Product = {
   photo: ImageSrc;
   category: 'Sofas' | 'Chairs' | 'Living' | 'Bedroom' | 'Lighting' | 'Decor' | 'Storage';
   /** The kind of piece, for its starting size in a room. */
-  kind?: 'sofa' | 'chair' | 'lamp' | 'table';
+  kind?: 'sofa' | 'chair' | 'lamp' | 'table' | 'rug';
   colors: string[];
   /** Unknown for Amazon products; the product page hides empty fields. */
   dims?: string;
@@ -76,12 +76,13 @@ const illustrated: Product[] = [
 
 type Cached = { asin: string; name: string; price: number | null; imageUrl: string; productUrl: string; rank: number | null; rating: number | null; ratingsTotal: number | null };
 
-// Rugs are cached too, but left out for now: their main photos are room scenes, so their stickers fail.
+// Rugs have no stickers (their main photos are room scenes), but in a room every piece is its line drawing now.
 const AMAZON: Record<string, Pick<Product, 'category' | 'kind'>> = {
   sofas: { category: 'Sofas', kind: 'sofa' },
   'accent-chairs': { category: 'Chairs', kind: 'chair' },
   'floor-lamps': { category: 'Lighting', kind: 'lamp' },
   'coffee-tables': { category: 'Living', kind: 'table' },
+  rugs: { category: 'Decor', kind: 'rug' },
 };
 
 /** Amazon titles run long ("Brand Sofa, 3 Seater | Foo, Bar"); keep the part before the first " | ", cut at a comma if still long. */

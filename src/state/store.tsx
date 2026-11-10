@@ -2,10 +2,16 @@ import React, { createContext, useContext, useMemo, useReducer } from 'react';
 import type { ImageSource } from 'expo-image';
 
 import { pick, productById } from '@/data/catalog';
+import { clampToFloor, geometryFor, startPointFor } from '@/lib/roomSpace';
 import { roomArt, type RoomKey } from '@/theme/rooms';
 
 // In-memory fake state so the mockup feels clickable. Nothing persists.
-export type Placed = { uid: string; productId: string; x: number; y: number; size: number };
+/**
+ * A piece placed in a room: where it stands on the floor, in inches (fx across, fy out from the back wall), and
+ * whether it is mirrored to face the other wall. Its size comes from its real dimensions (src/lib/roomSpace.ts).
+ * `front`, when set, lifts it over pieces it would otherwise sort behind.
+ */
+export type Placed = { uid: string; productId: string; fx: number; fy: number; mirror: boolean; front?: number };
 export type Space = {
   id: string;
   name: string;
@@ -26,7 +32,6 @@ type State = {
 
 let n = 100;
 const uid = () => `u${n++}`;
-const st = (productId: string, x: number, y: number, size: number): Placed => ({ uid: uid(), productId, x, y, size });
 
 const initial: State = {
   saved: [pick.sofa, pick.chair, 'mirror', pick.lamp, 'pendant'],
@@ -66,12 +71,10 @@ type Action =
   | { t: 'space/add'; space: Space }
   | { t: 'space/photo'; spaceId: string; uri: string }
   | { t: 'sticker/add'; spaceId: string; productId: string }
-  | { t: 'sticker/move'; spaceId: string; uid: string; x: number; y: number }
-  | { t: 'sticker/resize'; spaceId: string; uid: string; factor: number }
+  | { t: 'sticker/move'; spaceId: string; uid: string; fx: number; fy: number }
+  | { t: 'sticker/flip'; spaceId: string; uid: string }
   | { t: 'sticker/front'; spaceId: string; uid: string }
   | { t: 'sticker/remove'; spaceId: string; uid: string };
-
-const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
 
 function mapSpace(s: State, id: string, fn: (sp: Space) => Space): State {
   return { ...s, spaces: s.spaces.map((sp) => (sp.id === id ? { ...fn(sp), edited: 'Edited just now' } : sp)) };
@@ -89,24 +92,21 @@ function reducer(s: State, a: Action): State {
     case 'space/photo':
       return mapSpace(s, a.spaceId, (sp) => ({ ...sp, photoUri: a.uri }));
     case 'sticker/add':
-      return mapSpace(s, a.spaceId, (sp) => ({
-        ...sp,
-        stickers: [...sp.stickers, st(a.productId, 0.5, 0.66, defaultSize(a.productId))],
-      }));
+      return mapSpace(s, a.spaceId, (sp) => {
+        const [fx, fy] = startPointFor(geometryFor(sp.image), a.productId, productById(a.productId).kind, sp.stickers);
+        return { ...sp, stickers: [...sp.stickers, { uid: uid(), productId: a.productId, fx, fy, mirror: false }] };
+      });
     case 'sticker/move':
-      return mapSpace(s, a.spaceId, (sp) => ({
-        ...sp,
-        stickers: sp.stickers.map((x) => (x.uid === a.uid ? { ...x, x: clamp(a.x, 0, 1), y: clamp(a.y, 0, 1) } : x)),
-      }));
-    case 'sticker/resize':
-      return mapSpace(s, a.spaceId, (sp) => ({
-        ...sp,
-        stickers: sp.stickers.map((x) => (x.uid === a.uid ? { ...x, size: clamp(x.size * a.factor, 0.1, 1) } : x)),
-      }));
+      return mapSpace(s, a.spaceId, (sp) => {
+        const [fx, fy] = clampToFloor(geometryFor(sp.image), a.fx, a.fy);
+        return { ...sp, stickers: sp.stickers.map((x) => (x.uid === a.uid ? { ...x, fx, fy } : x)) };
+      });
+    case 'sticker/flip':
+      return mapSpace(s, a.spaceId, (sp) => ({ ...sp, stickers: sp.stickers.map((x) => (x.uid === a.uid ? { ...x, mirror: !x.mirror } : x)) }));
     case 'sticker/front':
       return mapSpace(s, a.spaceId, (sp) => {
-        const item = sp.stickers.find((x) => x.uid === a.uid);
-        return item ? { ...sp, stickers: [...sp.stickers.filter((x) => x.uid !== a.uid), item] } : sp;
+        const top = Math.max(0, ...sp.stickers.map((x) => x.front ?? 0)) + 1;
+        return { ...sp, stickers: sp.stickers.map((x) => (x.uid === a.uid ? { ...x, front: top } : x)) };
       });
     case 'sticker/remove':
       return mapSpace(s, a.spaceId, (sp) => ({ ...sp, stickers: sp.stickers.filter((x) => x.uid !== a.uid) }));
@@ -125,15 +125,6 @@ export function useStore() {
   const v = useContext(Ctx);
   if (!v) throw new Error('StoreProvider missing');
   return v;
-}
-
-/** Starting size of a new sticker, as a fraction of the room photo's width. */
-export function defaultSize(productId: string) {
-  const p = productById(productId);
-  if (p.kind === 'sofa' || p.category === 'Sofas') return 0.62;
-  if (p.kind === 'chair' || p.category === 'Chairs') return 0.36;
-  if (p.kind === 'lamp') return 0.3;
-  return 0.4;
 }
 
 /** The space's photo, or its line-art room. Pass the display width so small thumbnails get the heavier-line copy. */
